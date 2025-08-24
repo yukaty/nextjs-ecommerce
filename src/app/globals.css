@@ -8,6 +8,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-50: #FDF2F3;
+  --color-brand-100: #FCE7E8;
+  --color-brand-200: #F9D3D6;
+  --color-brand-300: #F4B1B7;
+  --color-brand-400: #ED8691;
+  --color-brand-500: #E74A5F;
+  --color-brand-600: #D73651;
+  --color-brand-700: #C22E43;
+  --color-brand-800: #A02839;
+  --color-brand-900: #872535;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -22,7 +32,9 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Common styles applied to the entire ecommerce site */

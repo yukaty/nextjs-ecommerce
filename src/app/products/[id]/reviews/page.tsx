@@ -42,7 +42,7 @@ export default async function ReviewsPage({
   return (
     <main className="p-8">
       <div className="my-4">
-        <Link href={`/products/${productId}`} className="text-indigo-600 hover:underline">
+        <Link href={`/products/${productId}`} className="text-brand-600 hover:underline">
           ← Back to Product Details
         </Link>
       </div>

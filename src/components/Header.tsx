@@ -57,11 +57,11 @@ export default function Header({ user }: HeaderProps) {
 
   return (
     <header className="bg-white shadow-md">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between">
         <div className="flex-shrink-0">
           <Link href="/">
             <Image
-              src="/images/store-logo.png"
+              src="/images/logo.webp"
               alt="MAPLE Store"
               width={910}
               height={200}
@@ -109,7 +109,7 @@ export default function Header({ user }: HeaderProps) {
               name="keyword"
               placeholder="Search..."
               defaultValue={keyword}
-              className="border border-gray-300 rounded-md py-1 px-3 text-sm focus:ring-2 focus:ring-indigo-500"
+              className="border border-gray-300 rounded-md py-1 px-3 text-sm focus:ring-2 focus:ring-brand-500"
             />
           </form>
           <Link href="/account/favorites">
@@ -130,7 +130,7 @@ export default function Header({ user }: HeaderProps) {
               className="w-6 h-6"
             />
             {displayQuantity > 0 && (
-              <span className="absolute -top-2 -right-2 w-[20px] h-[20px] bg-yellow-500 text-black flex items-center justify-center rounded-full ring-2 ring-white text-xs font-semibold">
+              <span className="absolute -top-2 -right-2 w-[20px] h-[20px] bg-brand-500 text-white flex items-center justify-center rounded-full ring-2 ring-white text-xs font-semibold">
                 {displayQuantity > 9 ? "9+" : displayQuantity}
               </span>
             )}

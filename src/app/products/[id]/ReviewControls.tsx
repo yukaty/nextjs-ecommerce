@@ -89,7 +89,7 @@ export default function ReviewControls({ productId, loggedIn }: ReviewControlsPr
           <p className="text-gray-600 mb-4">Please log in to post a review.</p>
           <button
             onClick={handleLoginRedirect}
-            className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-6 rounded-md shadow-md"
+            className="bg-brand-500 hover:bg-brand-600 text-white py-2 px-6 rounded-md shadow-md"
           >
             Log In to Post Review
           </button>
@@ -116,7 +116,7 @@ export default function ReviewControls({ productId, loggedIn }: ReviewControlsPr
             <label htmlFor="content" className="block text-gray-700 font-semibold mb-2">Comment</label>
             <textarea
               id="content" name="content" rows={4} value={content} disabled={submitting}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-brand-500 focus:border-brand-500 resize-y"
               placeholder="Write your review here..."
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
@@ -127,7 +127,7 @@ export default function ReviewControls({ productId, loggedIn }: ReviewControlsPr
           <button
             type="submit" disabled={submitting}
             className={`w-full py-3 px-4 rounded-md
-              ${submitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}
+              ${submitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-600 hover:bg-brand-700 text-white'}
             `}
           >
             {submitting ? 'Posting...' : 'Post Review'}

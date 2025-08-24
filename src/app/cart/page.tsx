@@ -16,7 +16,7 @@ export default function CartPage() {
       {cartItems.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-600">Your cart is empty.</p>
-          <Link href="/products" className="text-indigo-600 hover:underline">← Back to Products</Link>
+          <Link href="/products" className="text-brand-600 hover:underline">← Back to Products</Link>
         </div>
       ) : (
         <>
@@ -39,7 +39,7 @@ export default function CartPage() {
             </div>
             <Link
               href="/order-confirm"
-              className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-6 rounded"
+              className="bg-brand-500 hover:bg-brand-600 text-white py-2 px-6 rounded"
             >
               Proceed to Checkout
             </Link>

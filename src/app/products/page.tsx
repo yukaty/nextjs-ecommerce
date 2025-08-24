@@ -81,11 +81,11 @@ export default async function ProductsPage({
         <p className="text-lg mt-4">
           {keyword && (
             <>
-              Search results for &quot;<span className="text-blue-600 font-semibold">{keyword}</span>&quot;:
+              Search results for &quot;<span className="font-bold">{keyword}</span>&quot;:
             </>
           )}
-          {productsPageData.pagination.totalItems} products found (&nbsp;
-          Page {productsPageData.pagination.currentPage} of {productsPageData.pagination.totalPages}&nbsp;)
+          &nbsp;{productsPageData.pagination.totalItems} products found
+          ( Page {productsPageData.pagination.currentPage} of {productsPageData.pagination.totalPages}&nbsp;)
         </p>
         <Sort sort={sort} perPage={perPage} keyword={keyword} />
       </section>

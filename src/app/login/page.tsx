@@ -60,7 +60,7 @@ export default function LoginPage() {
 
   // Common style for input fields
   const inputStyle =
-    "w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-indigo-500";
+    "w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500";
   // Common style for labels
   const labelStyle = "block font-bold mb-1";
   // Common style for badges
@@ -101,13 +101,13 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full mt-6 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-sm font-semibold"
+          className="w-full mt-6 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded-sm font-semibold"
         >
           Login
         </button>
 
         <div className="text-center mt-4">
-          <Link href="/register" className="text-indigo-600 hover:underline">
+          <Link href="/register" className="text-brand-600 hover:underline">
             Register here
           </Link>
         </div>

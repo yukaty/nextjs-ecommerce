@@ -54,21 +54,21 @@ export default function Home() {
 
       <section className="relative w-full h-[60vh] sm:h-[70vh] overflow-hidden">
         <Image
-          src="/images/main-visual.jpg"
-          alt="Discover the latest collection"
+          src="/images/main-visual.webp"
+          alt="Main Visual"
           fill
-          className="object-cover object-center"
+          className="object-cover"
           priority
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 drop-shadow-md text-shadow-lg/50">
-            Discover the Latest Collection
+            Discover Canada’s Best
           </h1>
           <p className="text-base sm:text-lg md:text-xl mb-8 drop-shadow-md text-shadow-lg/50">
-            Find items to upgrade your style
+            Souvenirs, apparel, and gifts — all in one place.
           </p>
           <Link href="/products">
-            <button className="px-6 py-3 bg-white text-blue-800 font-semibold rounded-full shadow-md hover:bg-gray-200 transition-colors text-sm sm:text-base border border-gray-700">
+            <button className="px-6 py-3 bg-white text-brand-500 font-semibold rounded-full shadow-md hover:bg-gray-200 transition-colors text-sm sm:text-base border border-gray-700">
               Shop Now
             </button>
           </Link>
@@ -78,9 +78,7 @@ export default function Home() {
       <main className="container mx-auto px-8 pt-8 pb-12 flex flex-col gap-4 max-w-screen-xl">
         <section>
           <h2>
-            <span>Pick Up</span>
-            <span className="mx-2 font-light text-gray-400">|</span>
-            <span className="text-base">Recommended Products</span>
+            <span>Featured Picks</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {pickUp.slice(0, 3).map((item) => (
@@ -98,9 +96,7 @@ export default function Home() {
 
         <section>
           <h2>
-            <span>New Arrival</span>
-            <span className="mx-2 font-light text-gray-400">|</span>
-            <span className="text-base">New Arrivals</span>
+            <span>New Arrivals</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
             {newArrival.slice(0, 4).map((item) => (
@@ -120,9 +116,7 @@ export default function Home() {
 
         <section>
           <h2>
-            <span>Hot Items</span>
-            <span className="mx-2 font-light text-gray-400">|</span>
-            <span className="text-base">Featured Products</span>
+            <span>Best Sellers</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
             {hotItems.slice(0, 4).map((item) => (

@@ -80,7 +80,7 @@ export default async function AdminProductsPage({
           </Link>
           <Link
             href="/admin/products/register"
-            className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-sm font-semibold"
+            className="bg-brand-500 hover:bg-brand-600 text-white py-2 px-4 rounded-sm font-semibold"
           >
             Add New Product
           </Link>
@@ -125,7 +125,7 @@ export default async function AdminProductsPage({
                     <td className={tableStyle}>
                       <Link
                         href={`/admin/products/${product.id}`}
-                        className="text-indigo-600 hover:text-indigo-700 mr-6"
+                        className="text-brand-600 hover:text-brand-700 mr-6"
                       >
                         Edit
                       </Link>

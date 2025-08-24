@@ -64,7 +64,7 @@ export default function OrderConfirmPage() {
       {cartItems.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-600">No items in cart.</p>
-          <Link href="/products" className="text-indigo-600 hover:underline">← Back to Products</Link>
+          <Link href="/products" className="text-brand-600 hover:underline">← Back to Products</Link>
         </div>
       ) : (
         <>
@@ -80,7 +80,7 @@ export default function OrderConfirmPage() {
             </label>
             <textarea
               id="address" value={address} placeholder="Please enter your delivery address" required
-              className="w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500"
               onChange={(e) => setAddress(e.target.value)}
             />
           </div>
@@ -104,11 +104,11 @@ export default function OrderConfirmPage() {
           <div className="mt-8">
             <p className="text-sm">
               Before confirming your order, please be sure to read our
-              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold underline">
+              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-brand-600 font-bold underline">
                 Terms of Service
               </Link>
               and
-              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-bold underline">
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-brand-600 font-bold underline">
                 Privacy Policy
               </Link>
               .<br/>By checking the agreement box, you are deemed to have agreed to the above terms.
@@ -117,7 +117,7 @@ export default function OrderConfirmPage() {
               <input
                 type="checkbox" id="agreement-checkbox" checked={isAgreed}
                 onChange={(e) => setIsAgreed(e.target.checked)}
-                className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                className="h-4 w-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500"
               />
               <label htmlFor="agreement-checkbox" className="ml-2 text-base font-semibold text-gray-800 leading-snug">
                 I agree to the Terms of Service and Privacy Policy
@@ -131,7 +131,7 @@ export default function OrderConfirmPage() {
               disabled={!isAgreed || !address.trim()}
               className={`py-2 px-6 rounded-sm text-white ${
                 isAgreed && address.trim()
-                  ? 'bg-indigo-500 hover:bg-indigo-600'
+                  ? 'bg-brand-500 hover:bg-brand-600'
                   : 'bg-gray-400 cursor-not-allowed'
               }`}
             >

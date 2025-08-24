@@ -153,7 +153,7 @@ export default async function ProductDetailPage({
           <p className="text-gray-700 whitespace-pre-line">
             {product.description}
           </p>
-          <p className="text-3xl font-bold text-indigo-600">
+          <p className="text-3xl font-bold text-brand-600">
             ${product.price.toLocaleString()}
             <span className="text-base font-normal text-gray-500">
               (tax included)
@@ -224,7 +224,7 @@ export default async function ProductDetailPage({
                 <div className="text-center mt-4">
                   <Link
                     href={`/products/${productId}/reviews`}
-                    className="text-indigo-600 hover:underline"
+                    className="text-brand-600 hover:underline"
                   >
                     View All Reviews ({reviewCount})
                   </Link>
@@ -240,7 +240,7 @@ export default async function ProductDetailPage({
         </div>
       </div>
       <div className="mt-8 pt-4 border-t border-gray-200">
-        <Link href="/products" className="text-indigo-600 hover:underline">
+        <Link href="/products" className="text-brand-600 hover:underline">
           ← Back to Product List
         </Link>
       </div>

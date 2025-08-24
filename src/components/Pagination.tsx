@@ -25,7 +25,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
   // Base styles for pagination buttons
   const baseClasses = 'min-w-9 h-9 rounded border border-gray-300 mx-1 cursor-pointer';
   const hover = 'hover:bg-gray-100 hover:text-gray-800';
-  const active = 'bg-indigo-500 text-white border-indigo-500';
+  const active = 'bg-brand-500 text-white border-brand-500';
   const disabled = 'opacity-50';
 
   return (

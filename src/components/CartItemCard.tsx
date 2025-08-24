@@ -32,9 +32,9 @@ export default function CartItemCard({
       />
       <div className="flex-grow">
         <h2 className="text-xl">{item.title}</h2>
-        <p className="text-indigo-600 font-bold text-xl">
-          $ {item.price.toLocaleString()}
-          <span className="text-base font-normal text-gray-500">(tax included)</span>
+        <p className="font-bold text-xl">
+          ${item.price.toLocaleString()}
+          <span className="text-base font-normal text-gray-500"> (tax included)</span>
         </p>
         {isEditable ? (
           <div className="flex items-center mt-2 gap-4">
@@ -45,7 +45,7 @@ export default function CartItemCard({
                 id={`quantity-${item.id}`}
                 value={item.quantity}
                 onChange={(e) => onUpdateQuantity && onUpdateQuantity(item.id, Number(e.target.value))}
-                className="border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-indigo-500"
+                className="border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-brand-500"
             >
                 {quantityOptions}
             </select>

@@ -45,7 +45,7 @@ export default function ContactPage() {
   };
 
   // Common style for input fields
-  const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-indigo-500';
+  const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500';
   // Common style for labels
   const labelStyle = 'block font-bold mb-1';
   // Common style for badges
@@ -54,7 +54,7 @@ export default function ContactPage() {
   return (
     <main className="max-w-xl mx-auto py-10">
       <div className="my-4">
-        <Link href="/" className="text-indigo-600 hover:underline">
+        <Link href="/" className="text-brand-600 hover:underline">
           ← Back to Home
         </Link>
       </div>
@@ -79,7 +79,7 @@ export default function ContactPage() {
           className={inputStyle}
         ></textarea>
 
-        <button type="submit" className="w-full mt-2 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-sm">
+        <button type="submit" className="w-full mt-2 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded-sm">
           Submit
         </button>
       </form>

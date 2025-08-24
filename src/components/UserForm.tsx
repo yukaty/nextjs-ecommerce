@@ -14,7 +14,7 @@ interface UserFormProps {
 }
 
 // Common style for input fields
-const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-indigo-500';
+const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500';
 // Common style for labels
 const labelStyle = "block font-bold mb-1";
 // Common style for badges
@@ -61,7 +61,7 @@ export default function UserForm({
         </>
       )}
 
-      <button type="submit" className="w-full mt-2 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-sm">
+      <button type="submit" className="w-full mt-2 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded-sm">
         {submitLabel}
       </button>
     </form>

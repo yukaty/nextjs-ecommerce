@@ -19,7 +19,7 @@ export default function AccountPage() {
   }, [sessionId, clearCart]);
 
   // Common menu item styles
-  const menuItemStyle = "w-full flex items-center px-4 pt-4 border border-gray-300 rounded shadow-lg hover:ring-2 hover:ring-indigo-200 hover:shadow-xl hover:bg-gray-100";
+  const menuItemStyle = "w-full flex items-center px-4 pt-4 border border-gray-300 rounded shadow-lg hover:ring-2 hover:ring-brand-200 hover:shadow-xl hover:bg-gray-100";
 
   // Set message based on query parameters
   const message =

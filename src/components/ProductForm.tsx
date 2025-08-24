@@ -20,7 +20,7 @@ interface ProductFormProps {
 }
 
 // Common style for input fields
-const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-indigo-500';
+const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500';
 // Common style for labels
 const labelStyle = "block font-bold mb-1";
 // Common style for badges (indicating required fields)
@@ -141,7 +141,7 @@ export default function ProductForm({
           Cancel
         </button>
         <button type="submit"
-          className="w-1/2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 rounded-sm"
+          className="w-1/2 bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2 rounded-sm"
         >
           {submitLabel}
         </button>

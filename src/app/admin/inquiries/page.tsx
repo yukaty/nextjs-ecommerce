@@ -29,7 +29,7 @@ export default async function InquiriesPage() {
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="my-4">
-        <Link href="/admin/products" className="text-indigo-600 hover:underline">
+        <Link href="/admin/products" className="text-brand-600 hover:underline">
           ← Back to Product List
         </Link>
       </div>

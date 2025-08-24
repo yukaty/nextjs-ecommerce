@@ -68,7 +68,7 @@ export default function FavoritesPage() {
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="my-4">
-        <Link href="/account" className="text-indigo-600 hover:underline">
+        <Link href="/account" className="text-brand-600 hover:underline">
           ← Back to My Page
         </Link>
       </div>
@@ -76,7 +76,7 @@ export default function FavoritesPage() {
       {favorites.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-600">No favorite products found.</p>
-          <Link href="/products" className="text-indigo-600 hover:underline">← Browse products to find favorites</Link>
+          <Link href="/products" className="text-brand-600 hover:underline">← Browse products to find favorites</Link>
         </div>
       ) : (
         <div className="flex flex-col space-y-6">
@@ -94,9 +94,9 @@ export default function FavoritesPage() {
 
               <div className="flex-1 flex flex-col justify-between gap-4">
                 <h2 className="text-xl">{item.name}</h2>
-                <p className="text-indigo-600 font-bold text-lg">
+                <p className="text-brand-600 font-bold text-lg">
                   ${item.price.toLocaleString()}
-                  <span className="text-base font-normal text-gray-500">(tax included)</span>
+                  <span className="text-base font-normal text-gray-500"> (tax included)</span>
                 </p>
               </div>
 
@@ -107,14 +107,14 @@ export default function FavoritesPage() {
                     className={`py-2 px-4 rounded-sm min-w-[150px] ${
                     isInCart(item.id.toString())
                         ? 'bg-gray-400 text-white cursor-not-allowed'
-                        : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                        : 'bg-brand-500 hover:bg-brand-600 text-white'
                     }`}
                 >
                     {isInCart(item.id.toString()) ? 'Added' : 'Add to Cart'}
                 </button>
                 <button
                   onClick={() => handleRemoveFavorite(item.id)}
-                  className="py-2 px-4 rounded-sm min-w-[150px] bg-rose-500 hover:bg-rose-600 text-white"
+                  className="py-2 px-4 rounded-sm min-w-[150px] bg-brand-500 hover:bg-rose-600 text-white"
                 >
                   Remove from Favorites
                 </button>

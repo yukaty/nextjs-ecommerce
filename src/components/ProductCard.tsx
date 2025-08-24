@@ -93,11 +93,11 @@ export default function ProductCard({
             <button
               onClick={!inCart ? handleCart : undefined}
               disabled={inCart}
-              className={`border py-2 px-4 rounded-sm
+              className={`border py-2 px-4 rounded-sm transition-colors
                 ${
                   inCart
-                    ? "bg-indigo-500 text-white"
-                    : "border-indigo-500 text-indigo-500 hover:bg-indigo-400 hover:text-white"
+                    ? "bg-brand-500 text-white"
+                    : "border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-white"
                 }
               `}
             >

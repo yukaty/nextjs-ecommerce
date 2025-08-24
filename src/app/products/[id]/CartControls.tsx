@@ -54,7 +54,7 @@ export default function CartControls({ cartItem, stock, loggedIn }: CartControls
             <select
               id="quantity" name="quantity" value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
-              className="border border-gray-300 rounded-md px-4 py-2 w-24 focus:ring-2 focus:ring-indigo-500"
+              className="border border-gray-300 rounded-md px-4 py-2 w-24 focus:ring-2 focus:ring-brand-500"
             >
               {quantityOptions}
             </select>
@@ -66,7 +66,7 @@ export default function CartControls({ cartItem, stock, loggedIn }: CartControls
             className={`py-2 px-4 rounded-sm min-w-[130px] ${
               inCart
                 ? 'bg-gray-400 text-white cursor-not-allowed'
-                : 'bg-indigo-500 hover:bg-indigo-600 text-white'
+                : 'bg-brand-500 hover:bg-brand-600 text-white'
             }`}
           >
             {inCart ? 'Added' : 'Add to Cart'}
@@ -75,7 +75,7 @@ export default function CartControls({ cartItem, stock, loggedIn }: CartControls
           {loggedIn && (
             <button
               onClick={handleOrder}
-              className="border border-indigo-500 text-indigo-500 py-2 px-4 rounded-sm hover:bg-indigo-50"
+              className="border border-brand-500 text-brand-500 py-2 px-4 rounded-sm hover:bg-brand-50"
             >
               Proceed to Purchase
             </button>

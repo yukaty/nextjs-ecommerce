@@ -77,7 +77,7 @@ export default function OrdersPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="my-4">
-        <Link href="/account" className="text-indigo-600 hover:underline">
+        <Link href="/account" className="text-brand-800 hover:underline">
           ← Back to My Page
         </Link>
       </div>
@@ -96,7 +96,7 @@ export default function OrdersPage() {
                 </p>
               </div>
               <div className="text-right font-semibold">
-                <p className="text-blue-600 text-xl">
+                <p className="text-neutral-800 text-xl">
                   Total Amount: ${order.totalPrice.toLocaleString()} (including shipping)
                 </p>
                 <p className={getStatusStyle(order.status)}>
