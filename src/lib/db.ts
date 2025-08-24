@@ -13,7 +13,7 @@ const dbConfig = {
 const pool = mysql.createPool(dbConfig);
 
 // Execute SQL statement
-export async function executeQuery<T = any>(sql: string, params: any[] = []): Promise<T[]> {
+export async function executeQuery<T = unknown>(sql: string, params: (string | number | null)[] = []): Promise<T[]> {
   try {
     const [rows] = await pool.execute(sql, params);
     return rows as T[];

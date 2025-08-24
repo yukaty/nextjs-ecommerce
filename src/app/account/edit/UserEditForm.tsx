@@ -42,6 +42,7 @@ export default function UserEditForm({ initialValues }: Props) {
         setErrorMessage(data.message || 'Update failed.');
       }
     } catch (err) {
+      console.error('User update error:', err);
       setErrorMessage('A communication error occurred.');
     }
   };

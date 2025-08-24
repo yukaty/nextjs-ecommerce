@@ -67,6 +67,7 @@ export default function ReviewControls({ productId, loggedIn }: ReviewControlsPr
         setErrorMessage(data.message || 'Failed to post review.');
       }
     } catch (err) {
+      console.error('Review submission error:', err);
       setErrorMessage('Communication error occurred.');
     } finally {
       setSubmitting(false);

@@ -44,6 +44,7 @@ export default function UserRegisterPage() {
         setErrorMessage(data.message || 'Registration failed.');
       }
     } catch (err) {
+      console.error('User registration error:', err);
       setErrorMessage('A communication error occurred.');
     }
   };

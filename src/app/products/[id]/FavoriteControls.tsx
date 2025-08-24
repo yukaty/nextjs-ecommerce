@@ -1,6 +1,5 @@
 'use client'; // Runs on the client side
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 // Type definition for data (props) passed to favorite control component
@@ -11,7 +10,6 @@ interface FavoriteControlsProps {
 
 // Favorite control component
 export default function FavoriteControls({ productId, initialFavorite }: FavoriteControlsProps) {
-  const router = useRouter();
   // Favorite status
   const [isFavorite, setIsFavorite] = useState(initialFavorite);
   // Processing status

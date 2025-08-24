@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function PrivacyPolicyPage() {
   return (
     <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
@@ -6,7 +8,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>1. Introduction</h2>
       <p>
-        Maple Store ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our e-commerce platform and services. Please read this policy carefully to understand our practices regarding your personal information.
+        Maple Store (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our e-commerce platform and services. Please read this policy carefully to understand our practices regarding your personal information.
       </p>
 
       <h2>2. Information We Collect</h2>
@@ -82,7 +84,7 @@ export default function PrivacyPolicyPage() {
         Our website may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review their privacy policies before providing any personal information.
       </p>
 
-      <h2>10. Children's Privacy</h2>
+      <h2>10. Children&apos;s Privacy</h2>
       <p>
         Our services are not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware of such collection, we will take steps to delete the information promptly.
       </p>
@@ -94,7 +96,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>12. Changes to This Privacy Policy</h2>
       <p>
-        We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. We will notify you of material changes by posting the updated policy on our website and updating the "Last updated" date. Your continued use of our services constitutes acceptance of the updated policy.
+        We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. We will notify you of material changes by posting the updated policy on our website and updating the &quot;Last updated&quot; date. Your continued use of our services constitutes acceptance of the updated policy.
       </p>
 
       <h2>13. Contact Information</h2>

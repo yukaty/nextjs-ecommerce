@@ -6,7 +6,7 @@ import Pagination from "@/components/Pagination";
 import Sort from "@/app/products/Sort";
 
 // Product data type definition
-type Product = Pick<ProductData, "id" | "name" | "price" | "image_url">;
+type Product = Pick<ProductData, "id" | "name" | "price" | "image_url" | "review_avg" | "review_count">;
 
 // Data required for product list page
 interface ProductsPageData {
@@ -64,13 +64,13 @@ export default async function ProductsPage({
 
   // Convert to product card format
   const products: ProductCardProps[] = productsPageData.products.map(
-    (row: any) => ({
+    (row: Product) => ({
       id: String(row.id),
       title: row.name,
       price: row.price,
       rating: row.review_avg,
       reviewCount: row.review_count,
-      imageUrl: row.image_url,
+      imageUrl: row.image_url ?? undefined,
     })
   );
 
@@ -81,7 +81,7 @@ export default async function ProductsPage({
         <p className="text-lg mt-4">
           {keyword && (
             <>
-              Search results for "<span className="text-blue-600 font-semibold">{keyword}</span>":
+              Search results for &quot;<span className="text-blue-600 font-semibold">{keyword}</span>&quot;:
             </>
           )}
           {productsPageData.pagination.totalItems} products found (&nbsp;

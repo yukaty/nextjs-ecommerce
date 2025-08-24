@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { executeQuery } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 
@@ -32,7 +32,7 @@ interface OrderJoinRecord {
 }
 
 // Get order data
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user: AuthUser | null = await getAuthUser();
     if (!user) {

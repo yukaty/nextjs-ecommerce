@@ -42,6 +42,7 @@ export default function PasswordChangePage() {
         setErrorMessage(data.message || 'Password change failed.');
       }
     } catch (err) {
+      console.error('Password change error:', err);
       setErrorMessage('A communication error occurred.');
     }
   };

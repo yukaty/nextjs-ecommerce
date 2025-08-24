@@ -39,6 +39,7 @@ export default function ContactPage() {
         setErrorMessage(data.message || 'Submission failed.');
       }
     } catch (err) {
+      console.error('Contact form submission error:', err);
       setErrorMessage('Communication error occurred.');
     }
   };

@@ -44,6 +44,7 @@ export default function ProductRegisterPage() {
         setErrorMessage(data.message || 'Product registration failed.');
       }
     } catch (err) {
+      console.error('Product registration error:', err);
       setErrorMessage('A communication error occurred.');
     }
   };

@@ -53,6 +53,7 @@ export default function LoginPage() {
         setErrorMessage(data.message || "Login failed.");
       }
     } catch (err) {
+      console.error("Login error:", err);
       setErrorMessage("Communication error occurred.");
     }
   };

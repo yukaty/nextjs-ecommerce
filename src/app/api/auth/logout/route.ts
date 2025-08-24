@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // JWT cookie name
 const JWT_COOKIE = 'authToken';
 
 // Logout processing
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Redirect to top page
     const response = NextResponse.redirect(

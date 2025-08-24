@@ -7,7 +7,7 @@ import { type ProductData } from '@/types/product';
 type Product = Pick<ProductData, 'id' | 'name' | 'price' | 'image_url'>;
 
 // Get favorites list
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user: AuthUser | null = await getAuthUser();
     if (!user) {

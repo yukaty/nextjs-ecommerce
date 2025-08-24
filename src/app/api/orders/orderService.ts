@@ -64,7 +64,7 @@ export async function updateOrder(userId: number, orderId: number, status?: Orde
 
   // Assemble columns and values to update
   const fields: string[] = [];
-  const values: any[] = [];
+  const values: (string | number)[] = [];
 
   if (status) { // Update order status
     fields.push('status = ?');
