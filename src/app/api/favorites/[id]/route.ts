@@ -5,7 +5,7 @@ import { getAuthUser, type AuthUser } from '@/lib/auth';
 // Get favorite status for specified product
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -38,7 +38,7 @@ export async function GET(
 // Delete favorite
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;

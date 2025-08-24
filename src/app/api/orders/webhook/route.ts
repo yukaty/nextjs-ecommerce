@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     try { // Register order data (order status: processing, payment status: payment successful)
-      await updateOrder(Number(userId), Number(orderId), 'Processing', 'Payment Successful');
+      await updateOrder(Number(userId), Number(orderId), 'processing', 'payment_success');
     } catch (err) {
       console.error('Order status update error:', err);
       return NextResponse.json({ message: 'Failed to update order status.' }, { status: 500 });

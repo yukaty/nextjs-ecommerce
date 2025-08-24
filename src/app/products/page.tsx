@@ -24,7 +24,7 @@ interface ProductsPageData {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // searchParams is retrieved asynchronously, so await is required
   const sp = await searchParams;

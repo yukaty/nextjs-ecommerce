@@ -9,7 +9,7 @@ type Review = ReviewData; // No changes from basic type
 // Get review list for specified product ID
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -78,7 +78,7 @@ export async function GET(
 // Register new review
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;

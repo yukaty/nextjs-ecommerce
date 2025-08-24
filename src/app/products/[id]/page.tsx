@@ -15,9 +15,9 @@ type Product = ProductData; // No changes from base type
 
 // Data required for product detail page
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     id: string; // Product ID obtained from URL
-  };
+  }>;
 }
 
 // Get product data

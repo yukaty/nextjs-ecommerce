@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     await executeQuery(`
       INSERT INTO products (name, image_url, description, price, stock, is_featured)
       VALUES (?, ?, ?, ?, ?, ?);
-    `, [name, fileName, description, price, stock, isFeatured]);
+    `, [name, fileName, description, price, stock, isFeatured ? 1 : 0]);
 
     return NextResponse.json({ message: 'Product registered successfully.' }, { status: 201 });
   } catch (err) {

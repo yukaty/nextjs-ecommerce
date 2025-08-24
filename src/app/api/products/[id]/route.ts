@@ -9,7 +9,7 @@ type Product = ProductData; // No changes from base type
 // Get product data for specified ID
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -45,7 +45,7 @@ export async function GET(
 // Update product data for specified ID
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -82,7 +82,7 @@ export async function PUT(
 
     // Old and new image file names
     const oldFileName = currentProduct.image_url;
-    let newFileName = oldFileName; // Temporarily use existing filename
+    let newFileName: string | null = oldFileName || null; // Temporarily use existing filename
 
     // If a new image file has been uploaded
     if (file && file.size > 0) {
@@ -131,7 +131,7 @@ export async function PUT(
 // Delete product data for specified ID
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;

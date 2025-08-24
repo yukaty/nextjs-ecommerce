@@ -22,7 +22,7 @@ interface ProductsPageData {
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // Await searchParams to ensure it's resolved
   const sp = await searchParams;

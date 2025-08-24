@@ -105,9 +105,9 @@ export async function POST(request: NextRequest) {
       mode: 'payment',
       customer_email: user.email || undefined,
       // Redirect destination on payment success
-      success_url: `${request.nextUrl.origin}/account?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.BASE_URL}/account?session_id={CHECKOUT_SESSION_ID}`,
       // Redirect destination on payment cancellation
-      cancel_url: `${request.nextUrl.origin}/order-confirm`,
+      cancel_url: `${process.env.BASE_URL}/order-confirm`,
       // Metadata
       metadata: {
         // Include order ID so orders can be identified in webhook
