@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 
 // Type definition for final response (order data with product details in array)
 export interface OrderData {
   id: number;
-  totalPrice: number;
+  totalAmount: number;
   status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
   paymentStatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
   createdAt: string;
@@ -22,7 +22,7 @@ interface OrderItem {
 // Type definition for result records from table join of orders and order_items
 interface OrderJoinRecord {
   id: number;
-  totalPrice: number;
+  totalAmount: number;
   status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
   paymentStatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
   createdAt: string;
@@ -43,16 +43,16 @@ export async function GET() {
     const ordersData = await executeQuery<OrderJoinRecord>(`
       SELECT
         o.id AS id,
-        o.total_price AS totalPrice,
+        o.total_amount AS totalAmount,
         o.status AS status,
         o.payment_status AS paymentStatus,
         o.created_at AS createdAt,
         oi.product_name AS productName,
         oi.quantity AS quantity,
         oi.unit_price AS unitPrice
-      FROM orders AS o
-      JOIN order_items AS oi ON o.id = oi.order_id
-      WHERE o.user_id = ?
+      FROM ${TABLES.orders} AS o
+      JOIN ${TABLES.order_items} AS oi ON o.id = oi.order_id
+      WHERE o.user_id = $1
       ORDER BY o.created_at DESC, oi.id ASC;`,
       [user.userId]
     );
@@ -64,7 +64,7 @@ export async function GET() {
         // Register new ID in ordersMap
         ordersMap.set(row.id, {
           id: row.id,
-          totalPrice: row.totalPrice,
+          totalAmount: row.totalAmount,
           status: row.status,
           paymentStatus: row.paymentStatus,
           createdAt: row.createdAt,

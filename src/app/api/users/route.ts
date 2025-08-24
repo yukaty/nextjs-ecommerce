@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db'; // Common DB module
+import { executeQuery, TABLES } from '@/lib/db';
 import { getAuthUser, type AuthUser, AUTH_TOKEN } from '@/lib/auth';
 import bcrypt from 'bcrypt';
 import { generateToken } from '@/lib/jwt';
@@ -16,15 +16,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Please fill in all fields.' }, { status: 400 });
     }
 
-    // Email address format validation (only . and @ symbols allowed)
-    const emailPattern = /^[a-zA-Z0-9.]@[a-zA-Z0-9.]$/;
+    // Email address format validation
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
       return NextResponse.json({ message: 'Please enter a valid email address format.' }, { status: 400 });
     }
 
     // Check for duplicate email address
     const existingUser = await executeQuery<{ count: number }>(
-      'SELECT COUNT(*) AS count FROM users WHERE email = ?',
+      `SELECT COUNT(*) AS count FROM ${TABLES.users} WHERE email = $1`,
       [email]
     );
     if (existingUser[0]?.count > 0) { // Same email address already registered
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
 
     // Add user information to users table (register as regular user)
     await executeQuery(`
-      INSERT INTO users (name, email, password, is_admin, enabled)
-      VALUES (?, ?, ?, false, true);
+      INSERT INTO ${TABLES.users} (name, email, password, is_admin, enabled)
+      VALUES ($1, $2, $3, false, true);
       `, [name, email, hashed]
     );
 
@@ -68,16 +68,16 @@ export async function PUT(request: NextRequest) {
     if (!name?.trim() || !email?.trim()) {
       return NextResponse.json({ message: 'Please fill in all fields.' }, { status: 400 });
     }
-
-    // Email address format validation (only . and @ symbols allowed)
-    const emailPattern = /^[a-zA-Z0-9.]@[a-zA-Z0-9.]$/;
+    console.log(name, email);
+    // Email address format validation
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
       return NextResponse.json({ message: 'Please enter a valid email address format.' }, { status: 400 });
     }
 
     // Check for duplicate email address (excluding self)
     const existingUser = await executeQuery<{ count: number }>(
-      'SELECT COUNT(*) AS count FROM users WHERE email = ? AND id != ?',
+      `SELECT COUNT(*) AS count FROM ${TABLES.users} WHERE email = $1 AND id != $2`,
       [email, user.userId]
     );
     if (existingUser[0]?.count > 0) {
@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest) {
 
     // Update user information
     await executeQuery(
-      'UPDATE users SET name = ?, email = ? WHERE id = ?;',
+      `UPDATE ${TABLES.users} SET name = $1, email = $2 WHERE id = $3`,
       [name, email, user.userId]
     );
 
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest) {
       httpOnly: true, // Prevent JavaScript access (XSS protection)
       // secure should only be true in production environment
       secure: process.env.NODE_ENV === 'production', // Send only over encrypted HTTPS (reduce eavesdropping risk)
-      sameSite: 'strict', // Don't send cookies on cross-site requests (CSRF protection)
+      sameSite: 'lax', // Allow cookies on cross-site GET requests (for external redirects)
       // maxAge is in seconds
       maxAge: 60 * 60, // Expiration time (1 hour)
       path: '/', // Make cookies available for all paths

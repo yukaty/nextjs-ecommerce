@@ -1,4 +1,4 @@
-'use client'; // Runs on client (browser) side
+'use client';
 
 import Link from 'next/link';
 import { useEffect } from 'react';

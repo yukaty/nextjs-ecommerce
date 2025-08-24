@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 import bcrypt from 'bcrypt';
 
@@ -26,7 +26,7 @@ export async function PUT(request: NextRequest) {
 
     // Get current password
     const result = await executeQuery<{ password: string }>(
-      'SELECT password FROM users WHERE id = ?',
+      `SELECT password FROM ${TABLES.users} WHERE id = $1`,
       [user.userId]
     );
     const oldHashed = result[0]?.password;
@@ -43,7 +43,7 @@ export async function PUT(request: NextRequest) {
     // Hash and update new password
     const newHashed = await bcrypt.hash(newPassword, 10);
     await executeQuery(
-      'UPDATE users SET password = ? WHERE id = ?',
+      `UPDATE ${TABLES.users} SET password = $1 WHERE id = $2`,
       [newHashed, user.userId]
     );
 

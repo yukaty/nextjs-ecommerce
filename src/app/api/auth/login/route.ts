@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { generateToken } from '@/lib/jwt';
 
 // JWT cookie name
@@ -19,13 +19,13 @@ export async function POST(request: NextRequest) {
 
     // Search for user matching the entered email address
     const users = await executeQuery<{ id: number; name: string; email: string; password: string; is_admin: boolean }>(
-      'SELECT * FROM users WHERE email = ? AND enabled = TRUE',
+      `SELECT * FROM ${TABLES.users} WHERE email = $1 AND enabled = TRUE`,
       [email]
     );
 
     const user = users[0];
     if (!user) { // No matching user found
-      return NextResponse.json({ message: 'Email address or password is incorrect.' }, { status: 401 });
+      return NextResponse.json({ message: 'User not found or not enabled.' }, { status: 401 });
     }
 
     // Password comparison
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true, // Prevent JavaScript access (XSS protection)
       // secure should only be true in production environment
       secure: process.env.NODE_ENV === 'production', // Send only over encrypted HTTPS (reduce eavesdropping risk)
-      sameSite: 'strict', // Don't send cookies on cross-site requests (CSRF protection)
+      sameSite: 'lax', // Allow cookies on cross-site GET requests (for external redirects)
       // maxAge is in seconds
       maxAge: 60 * 60, // Expiration time (1 hour)
       path: '/', // Make cookies available for all paths

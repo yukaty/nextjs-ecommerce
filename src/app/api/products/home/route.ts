@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { type ProductData } from '@/types/product';
 
 // Product data type definition
@@ -12,7 +12,7 @@ export async function GET() {
     const [pickUp, newArrival, hotItems] = await Promise.all([
       executeQuery<Product[]>(`
         SELECT id, name, price, image_url
-        FROM products
+        FROM ${TABLES.products}
         ORDER BY sales_count DESC
         LIMIT 3;
       `),
@@ -24,8 +24,8 @@ export async function GET() {
           p.image_url,
           COALESCE(ROUND(AVG(r.score), 1), 0) AS review_avg,
           COALESCE(COUNT(r.id), 0) AS review_count
-        FROM products AS p
-        LEFT JOIN reviews AS r ON r.product_id = p.id
+        FROM ${TABLES.products} AS p
+        LEFT JOIN ${TABLES.reviews} AS r ON r.product_id = p.id
         GROUP BY p.id
         ORDER BY p.created_at DESC
         LIMIT 4;
@@ -38,11 +38,11 @@ export async function GET() {
           p.image_url,
           COALESCE(ROUND(AVG(r.score), 1), 0) AS review_avg,
           COALESCE(COUNT(r.id), 0) AS review_count
-        FROM products AS p
-        LEFT JOIN reviews AS r ON r.product_id = p.id
+        FROM ${TABLES.products} AS p
+        LEFT JOIN ${TABLES.reviews} AS r ON r.product_id = p.id
         WHERE p.is_featured = true
         GROUP BY p.id
-        ORDER BY RAND()
+        ORDER BY RANDOM()
         LIMIT 4;
       `)
     ]);

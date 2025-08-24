@@ -1,6 +1,6 @@
 # Next.js eCommerce Application
 
-An eCommerce application built with Next.js, TypeScript, and MySQL.
+An eCommerce application built with Next.js, TypeScript, and PostgreSQL.
 
 ## Features
 
@@ -11,49 +11,56 @@ An eCommerce application built with Next.js, TypeScript, and MySQL.
 - Payment processing with Stripe
 - Admin dashboard for product management
 
-## Getting Started
+## Tech Stack
+
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL with pg
+- **Authentication**: JWT with jose
+- **Payments**: Stripe
+
+## Local Setup
 
 ### Prerequisites
 
 - Node.js 18+
-- MySQL
-- Stripe account for payments test
+- PostgreSQL
+- Stripe account for test mode
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
+1. Clone the repository and install dependencies:
+    ```bash
+    npm install
+    ```
 
-```bash
-npm install
-```
+2. Configure environment variables:
+    ```bash
+    cp .env.example .env
+    ```
 
-3. Set up environment variables (create `.env.local`):
+3. Set up the database:
 
-```
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=your_username
-DB_PASS=your_password
-DB_NAME=your_database
-JWT_SECRET=your_jwt_secret
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_webhook_secret
-```
+    Run the SQL schema from `database/schema-postgres.sql` to create the required tables.
 
 4. Run the development server:
+    ```bash
+    npm run dev
+    ```
 
-```bash
-npm run dev
-```
+5. Set up Stripe webhook:
+    ```bash
+    stripe login
+    stripe listen --forward-to localhost:3000/api/orders/webhook
+    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+    Copy the webhook signing secret from the CLI output and add it to your `.env` file as `STRIPE_WEBHOOK_SECRET`.
 
-## Tech Stack
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Database**: MySQL with mysql2
-- **Authentication**: JWT with jose
-- **Payments**: Stripe
+## Demo Credentials
+
+See `database/schema-postgres.sql` for sample user credentials.
+
+For payment testing, see: https://docs.stripe.com/testing
 

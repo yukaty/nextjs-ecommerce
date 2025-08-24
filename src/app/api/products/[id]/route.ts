@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path';
 import { writeFile, rm } from 'fs/promises';
-import { executeQuery } from '@/lib/db'; // Common DB module
-import type { ProductData } from '@/types/product'; // Product data type definition
+import { executeQuery, TABLES } from '@/lib/db';
+import type { ProductData } from '@/types/product';
 
 type Product = ProductData; // No changes from base type
 
 // Get product data for specified ID
 export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -19,7 +19,7 @@ export async function GET(
 
   try { // Get product data from database
     const result = await executeQuery<Product>(
-      'SELECT * FROM products WHERE id = ?;',
+      `SELECT * FROM ${TABLES.products} WHERE id = $1`,
       [productId]
     );
 
@@ -45,7 +45,7 @@ export async function GET(
 // Update product data for specified ID
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -56,7 +56,7 @@ export async function PUT(
   try {
     // Get existing product data (existence check)
     const existing = await executeQuery<Product>(
-      'SELECT * FROM products WHERE id = ?;',
+      `SELECT * FROM ${TABLES.products} WHERE id = $1`,
       [productId]
     );
     if (existing.length === 0) {
@@ -82,14 +82,26 @@ export async function PUT(
 
     // Old and new image file names
     const oldFileName = currentProduct.image_url;
-    let newFileName = oldFileName; // Temporarily use existing filename
+    let newFileName: string | null = oldFileName || null; // Temporarily use existing filename
 
     // If a new image file has been uploaded
     if (file && file.size > 0) {
       // Safely get file extension
       const ext = file.name.split('.').pop();
-      if (!ext || !['jpg', 'jpeg', 'png'].includes(ext.toLowerCase())) {
+      if (!ext || !['jpg', 'jpeg', 'png', 'webp'].includes(ext.toLowerCase())) {
         return NextResponse.json({ message: 'Unsupported file format.' }, { status: 400 });
+      }
+
+      // MIME Type check
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedMimeTypes.includes(file.type)) {
+        return NextResponse.json({ message: 'Unsupported file format. Please select a JPEG, PNG, or WebP file.' }, { status: 400 });
+      }
+
+      // File size validation (limit to 2MB for product images)
+      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+      if (file.size > maxSizeInBytes) {
+        return NextResponse.json({ message: 'Image file size must be less than 2MB.' }, { status: 400 });
       }
 
       // Generate unique filename
@@ -117,9 +129,9 @@ export async function PUT(
 
     // Update product information in products table
     await executeQuery(`
-      UPDATE products
-      SET name = ?, image_url = ?, description = ?, price = ?, stock = ?
-      WHERE id = ?;
+      UPDATE ${TABLES.products}
+      SET name = $1, image_url = $2, description = $3, price = $4, stock = $5
+      WHERE id = $6
     `, [name, newFileName, description, price, stock, productId]);
 
     return NextResponse.json({ message: 'Product has been updated.' }, { status: 200 });
@@ -130,8 +142,8 @@ export async function PUT(
 }
 // Delete product data for specified ID
 export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -142,7 +154,7 @@ export async function DELETE(
   try {
     // Get existing product data (existence check)
     const existing = await executeQuery<Product>(
-      'SELECT * FROM products WHERE id = ?;',
+      `SELECT * FROM ${TABLES.products} WHERE id = $1`,
       [productId]
     );
     if (existing.length === 0) {
@@ -165,7 +177,7 @@ export async function DELETE(
 
     // Delete product from database
     await executeQuery(
-      'DELETE FROM products WHERE id = ?;',
+      `DELETE FROM ${TABLES.products} WHERE id = $1`,
       [productId]
     );
 

@@ -1,6 +1,5 @@
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { CartItem } from '@/hooks/useCart';
-import { type ResultSetHeader } from 'mysql2/promise';
 
 // Order status
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
@@ -15,7 +14,7 @@ export async function checkStock(cartItems: CartItem[]): Promise<string[]> {
   // Check all items sequentially
   for (const item of cartItems) {
     const result = await executeQuery<{ name: string, stock: number }>(
-      `SELECT name, stock FROM products WHERE id = ? LIMIT 1;`,
+      `SELECT name, stock FROM ${TABLES.products} WHERE id = $1 LIMIT 1`,
       [item.id]
     );
     const product = result[0];
@@ -30,26 +29,26 @@ export async function checkStock(cartItems: CartItem[]): Promise<string[]> {
 }
 
 // Register new order data
-export async function createOrder(userId: number, cartItems: CartItem[], address: string, totalPrice: number): Promise<number> {
+export async function createOrder(userId: number, cartItems: CartItem[], address: string, totalAmount: number): Promise<number> {
   if (!Array.isArray(cartItems) || cartItems.length === 0) throw new Error('Cart is empty.');
   if (!address?.trim()) throw new Error('Shipping address is not entered.');
-  if (isNaN(totalPrice) || totalPrice <= 0) throw new Error('Total amount is invalid.');
+  if (isNaN(totalAmount) || totalAmount <= 0) throw new Error('Total amount is invalid.');
 
   // Add order information to orders table
-  const result = await executeQuery<{ insertId: number }>(`
-    INSERT INTO orders (user_id, total_price, status, payment_status, shipping_address)
-    VALUES (?, ?, 'pending', 'unpaid', ?);`,
-    [userId, totalPrice, address]
-  ) as unknown as ResultSetHeader; // Type conversion to single object
+  const result = await executeQuery<{ id: number }>(`
+    INSERT INTO ${TABLES.orders} (user_id, total_amount, status, payment_status, shipping_address)
+    VALUES ($1, $2, 'pending', 'unpaid', $3) RETURNING id;`,
+    [userId, totalAmount, address]
+  );
   // Get the order ID of the added data
-  const orderId = result.insertId;
+  const orderId = result[0]?.id;
   if (!orderId) throw new Error('Failed to register order.');
 
   // Add order details to order_items table
   for (const product of cartItems) {
     await executeQuery(`
-      INSERT INTO order_items (order_id, product_id, product_name, quantity, unit_price)
-      VALUES (?, ?, ?, ?, ?);`,
+      INSERT INTO ${TABLES.order_items} (order_id, product_id, product_name, quantity, unit_price)
+      VALUES ($1, $2, $3, $4, $5);`,
       [orderId, product.id, product.title, product.quantity, product.price]);
   }
 
@@ -59,19 +58,20 @@ export async function createOrder(userId: number, cartItems: CartItem[], address
 
 // Update order data for specified ID
 export async function updateOrder(userId: number, orderId: number, status?: OrderStatus, paymentStatus?: PaymentStatus) {
-  if (!userId) throw new Error('Not authenticated.');
-  if (!orderId) throw new Error('Order ID is required.');
+  if (!userId || isNaN(userId)) throw new Error('User ID is invalid.');
+  if (!orderId || isNaN(orderId)) throw new Error('Order ID is invalid.');
 
   // Assemble columns and values to update
   const fields: string[] = [];
   const values: (string | number)[] = [];
 
+  let paramIndex = 1;
   if (status) { // Update order status
-    fields.push('status = ?');
+    fields.push(`status = $${paramIndex++}`);
     values.push(status);
   }
   if (paymentStatus) { // Update payment status
-    fields.push('payment_status = ?');
+    fields.push(`payment_status = $${paramIndex++}`);
     values.push(paymentStatus);
   }
 
@@ -82,26 +82,26 @@ export async function updateOrder(userId: number, orderId: number, status?: Orde
 
  // Update order information in orders table
   const result = await executeQuery(`
-    UPDATE orders
+    UPDATE ${TABLES.orders}
     SET ${fields.join(', ')}
-    WHERE id = ? AND user_id = ? AND payment_status != 'payment_success';`,
+    WHERE id = $${paramIndex++} AND user_id = $${paramIndex} AND payment_status != 'payment_success';`,
     values
-  ) as unknown as ResultSetHeader; // Type conversion to single object
+  );
 
   // Update product stock and sales count if payment successful and order data update successful
-  if (paymentStatus === 'payment_success' && result.affectedRows > 0) {
+  if (paymentStatus === 'payment_success' && result.affectedRows! > 0) {
     // Get product IDs and order quantities associated with order ID
     const orderItems = await executeQuery<{ product_id: number; quantity: number }>(
-      `SELECT product_id, quantity FROM order_items WHERE order_id = ?;`,
+      `SELECT product_id, quantity FROM ${TABLES.order_items} WHERE order_id = $1`,
       [orderId]
     );
 
     // Update stock and sales count of purchased products sequentially
     for (const item of orderItems) {
       await executeQuery(`
-        UPDATE products
-        SET stock = stock - ?, sales_count = sales_count + ?, updated_at = NOW()
-        WHERE id = ?;`,
+        UPDATE ${TABLES.products}
+        SET stock = stock - $1, sales_count = sales_count + $2, updated_at = NOW()
+        WHERE id = $3`,
         [item.quantity, item.quantity, item.product_id]
       );
     }

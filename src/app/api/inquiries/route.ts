@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 
 // Data type definition for inquiries table
 type Inquiry = {
@@ -15,7 +15,7 @@ export async function GET() {
   try {
     // Get all inquiry data
     const inquiries = await executeQuery<Inquiry>(
-      'SELECT * FROM inquiries ORDER BY created_at DESC;'
+      `SELECT * FROM ${TABLES.inquiries} ORDER BY created_at DESC;`
     );
 
     return NextResponse.json(inquiries);
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Add inquiry information to inquiries table
     await executeQuery(
-      'INSERT INTO inquiries (name, email, message) VALUES (?, ?, ?)',
+      `INSERT INTO ${TABLES.inquiries} (name, email, message) VALUES ($1, $2, $3)`,
       [name, email, message]
     );
 

@@ -34,19 +34,19 @@ export async function middleware(request: NextRequest) {
 
   // Get token from cookies
   const token = request.cookies.get(AUTH_TOKEN)?.value;
-  if (!token) { // Redirect to login page if no token
+  if (!token) {
     return redirectToLogin(request);
   }
 
   // Get user information and verify token
   const user = await verifyToken(token);
-  if (!user) { // Redirect to login page if verification fails
+  if (!user) {
     return redirectToLogin(request);
   }
 
   // For admin page requests, check if user has admin privileges
   if (adminPages.some((path) => pathname.startsWith(path))) {
-    if (!user.isAdmin) { // Redirect to login page if no admin privileges
+    if (!user.isAdmin) {
       return redirectToLogin(request);
     }
   }

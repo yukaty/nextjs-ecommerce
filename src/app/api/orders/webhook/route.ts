@@ -36,17 +36,20 @@ export async function POST(request: NextRequest) {
   // If checkout session completion event
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
+    console.log('Checkout session completed:', session);
 
     // Assumes order ID and user ID are included in metadata
+    const sessionId = session.id;
     const orderId = session.metadata?.orderId;
     const userId: string = session.metadata?.userId ?? '';
-    if (!orderId || !userId) {
-      console.error('Webhook does not contain orderId or userId.');
-      return NextResponse.json({ message: 'Order information is invalid.' }, { status: 400 });
+    if (!sessionId || !orderId || !userId) {
+      console.error('Webhook does not contain necessary metadata.');
+      return NextResponse.json({ message: 'Order information is missing.' }, { status: 400 });
     }
 
-    try { // Register order data (order status: processing, payment status: payment successful)
-      await updateOrder(Number(userId), Number(orderId), 'Processing', 'Payment Successful');
+    try {
+      // Register order data
+      await updateOrder(Number(userId), Number(orderId), 'completed', 'payment_success');
     } catch (err) {
       console.error('Order status update error:', err);
       return NextResponse.json({ message: 'Failed to update order status.' }, { status: 500 });

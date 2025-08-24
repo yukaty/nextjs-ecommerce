@@ -1,51 +1,84 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { OrderData } from "@/app/api/orders/route";
+import { getAuthUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { executeQuery, TABLES } from "@/lib/db";
 
-export default function OrdersPage() {
-  const [orders, setOrders] = useState<OrderData[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+// Order data types
+interface OrderData {
+  id: number;
+  totalAmount: number;
+  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
+  paymentStatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
+  createdAt: string;
+  items: OrderItem[];
+}
 
-  // Fetch orders when the component mounts
-  useEffect(() => {
-    const getOrders = async () => {
-      try {
-        const res = await fetch("/api/orders");
-        const data = await res.json();
-        if (!res.ok) {
-          setErrorMessage(data.message || "Failed to fetch orders.");
-          setLoading(false); // Stop loading state
-          return;
-        }
-        setOrders(data.orders); // Set the fetched orders
-      } catch (err) {
-        console.error(err);
-        setErrorMessage("Failed to fetch orders. Please try again later.");
-      } finally {
-        setLoading(false); // Stop loading state
-      }
-    };
+interface OrderItem {
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+}
 
-    // Call the function to fetch orders
-    getOrders();
-  }, []);
+interface OrderJoinRecord {
+  id: number;
+  totalamount: number;
+  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
+  paymentstatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
+  createdat: string;
+  productname: string;
+  quantity: number;
+  unitprice: number;
+}
 
-  if (loading)
-    return (
-      <div className="text-center py-12 text-gray-600 text-lg">
-        <p>Loading orders...</p>
-        <p className="mt-4">Please wait while we fetch your order history.</p>
-      </div>
-    );
-  if (errorMessage)
-    return <p className="text-center py-12 text-red-600">{errorMessage}</p>;
-  if (orders.length === 0)
-    return (
-      <p className="text-center py-12 text-gray-500">No order history found.</p>
-    );
+export default async function OrdersPage() {
+  const user = await getAuthUser();
+  if (!user) {
+    redirect('/login?redirect=/account/orders');
+  }
+
+  // Get orders and order details associated with user ID
+  const ordersData = await executeQuery<OrderJoinRecord>(`
+    SELECT
+      o.id AS id,
+      o.total_amount AS totalAmount,
+      o.status AS status,
+      o.payment_status AS paymentStatus,
+      o.created_at AS createdAt,
+      oi.product_name AS productName,
+      oi.quantity AS quantity,
+      oi.unit_price AS unitPrice
+    FROM ${TABLES.orders} AS o
+    JOIN ${TABLES.order_items} AS oi ON o.id = oi.order_id
+    WHERE o.user_id = $1
+    ORDER BY o.created_at DESC, oi.id ASC;`,
+    [user.userId]
+  );
+
+  console.log('Orders data from DB:', ordersData);
+
+  // Use Map object to group product data by order
+  const ordersMap = new Map<number, OrderData>();
+  ordersData.forEach((row: OrderJoinRecord) => {
+    if (!ordersMap.has(row.id)) {
+      ordersMap.set(row.id, {
+        id: row.id,
+        totalAmount: Number(row.totalamount),
+        status: row.status,
+        paymentStatus: row.paymentstatus,
+        createdAt: row.createdat,
+        items: []
+      });
+    }
+
+    // Add current record's product details to items array
+    ordersMap.get(row.id)?.items.push({
+      productName: row.productname,
+      quantity: Number(row.quantity),
+      unitPrice: Number(row.unitprice),
+    });
+  });
+
+  const orders = Array.from(ordersMap.values());
 
   // Determine display style based on status
   const getStatusStyle = (
@@ -56,22 +89,35 @@ export default function OrdersPage() {
       case "processing":
       case "unpaid":
       case "payment_processing":
-      case "refund_processing": // In progress or requires confirmation
+      case "refund_processing":
         return "text-yellow-500";
       case "shipped":
       case "completed":
-      case "payment_success": // Positive completion state
+      case "payment_success":
         return "text-green-500";
       case "cancelled":
       case "payment_failed":
-      case "refunded": // Negative final state
+      case "refunded":
         return "text-red-500";
       default:
-        return "text-gray-500"; // Default color
+        return "text-gray-500";
     }
   };
 
-  // Common table style
+  if (orders.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="my-4">
+          <Link href="/account" className="text-brand-800 hover:underline">
+            ← Back to My Page
+          </Link>
+        </div>
+        <h1 className="text-center mb-8">Order History</h1>
+        <p className="text-center py-12 text-gray-500">No order history found.</p>
+      </div>
+    );
+  }
+
   const tableStyle = "px-3 py-2 border-b";
 
   return (
@@ -97,7 +143,7 @@ export default function OrdersPage() {
               </div>
               <div className="text-right font-semibold">
                 <p className="text-neutral-800 text-xl">
-                  Total Amount: ${order.totalPrice.toLocaleString()} (including shipping)
+                  Total Amount: ${order.totalAmount.toLocaleString()} (including shipping)
                 </p>
                 <p className={getStatusStyle(order.status)}>
                   Order Status: {order.status}

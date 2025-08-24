@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 
 // Get favorite status for specified product
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -24,7 +24,7 @@ export async function GET(
 
     // Check if it exists in favorites table
     const existing = await executeQuery(
-      'SELECT id FROM favorites WHERE product_id = ? AND user_id = ?;',
+      `SELECT id FROM ${TABLES.favorites} WHERE product_id = $1 AND user_id = $2`,
       [productId, user.userId]
     );
 
@@ -38,7 +38,7 @@ export async function GET(
 // Delete favorite
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -57,7 +57,7 @@ export async function DELETE(
 
     // Check if the corresponding favorite exists
     const existing = await executeQuery(
-      'SELECT id FROM favorites WHERE product_id = ? AND user_id = ?;',
+      `SELECT id FROM ${TABLES.favorites} WHERE product_id = $1 AND user_id = $2`,
       [productId, user.userId]
     );
     if (existing.length === 0) {
@@ -66,7 +66,7 @@ export async function DELETE(
 
     // Delete favorite data
     await executeQuery(
-      'DELETE FROM favorites WHERE product_id = ? AND user_id = ?;',
+      `DELETE FROM ${TABLES.favorites} WHERE product_id = $1 AND user_id = $2`,
       [productId, user.userId]
     );
 

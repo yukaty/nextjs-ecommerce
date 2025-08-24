@@ -3,10 +3,10 @@ import Stripe from 'stripe';
 import { checkStock, createOrder } from '@/app/api/orders/orderService';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 import { CartItem } from '@/hooks/useCart';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 
 // Shipping cost
-const SHIPPING_COST = 500; // Fixed at 500 yen
+const SHIPPING_COST = 15;  // Fixed shipping cost
 
 // Get Stripe secret key from environment variables
 const SECRET_KEY = process.env.STRIPE_SECRET_KEY;
@@ -38,11 +38,11 @@ export async function POST(request: NextRequest) {
     if (productIds.length === 0) {
       return NextResponse.json({ message: 'No products selected.' }, { status: 400 });
     }
-    const placeholders = productIds.map(() => '?').join(','); // ?,?,?...
+    const placeholders = productIds.map((_, index) => `$${index + 1}`).join(','); // $1,$2,$3...
     const products = await executeQuery<{ id: number; name: string; price: number }>(`
       SELECT id, name, price
-      FROM products
-      WHERE id IN (${placeholders});
+      FROM ${TABLES.products}
+      WHERE id IN (${placeholders})
     `, productIds); // Get product data included in list collectively
 
     if (products.length === 0) {
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
     // Create Stripe line_items
     let totalPrice = 0; // Total amount
     const line_items = items.map(item => {
+
       // Calculate total amount on server side based on database information (tampering prevention)
 
       const product = products.find(p => p.id === Number(item.id));
@@ -63,11 +64,11 @@ export async function POST(request: NextRequest) {
 
       return {
         price_data: {
-          currency: 'jpy', // Japanese Yen
-          product_data: { name: product.name }, // Product name
-          unit_amount: product.price, // Unit price (yen)
+          currency: 'cad',
+          product_data: { name: product.name },
+          unit_amount: Math.round(product.price * 100), // Convert CAD to cents
         },
-        quantity: item.quantity, // Quantity
+        quantity: item.quantity,
       };
     });
 
@@ -75,9 +76,9 @@ export async function POST(request: NextRequest) {
     totalPrice += SHIPPING_COST;
     line_items.push({
       price_data: {
-        currency: 'jpy', // Japanese Yen
+        currency: 'cad',
         product_data: { name: 'Shipping' },
-        unit_amount: SHIPPING_COST,
+        unit_amount: Math.round(SHIPPING_COST * 100), // Convert CAD to cents
       },
       quantity: 1,
     });
@@ -105,9 +106,9 @@ export async function POST(request: NextRequest) {
       mode: 'payment',
       customer_email: user.email || undefined,
       // Redirect destination on payment success
-      success_url: `${request.nextUrl.origin}/account?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.BASE_URL}/account?session_id={CHECKOUT_SESSION_ID}`,
       // Redirect destination on payment cancellation
-      cancel_url: `${request.nextUrl.origin}/order-confirm`,
+      cancel_url: `${process.env.BASE_URL}/order-confirm`,
       // Metadata
       metadata: {
         // Include order ID so orders can be identified in webhook
@@ -115,6 +116,14 @@ export async function POST(request: NextRequest) {
         userId: user.userId.toString()
       }
     });
+
+    // Update order with stripe session ID
+    await executeQuery(`
+      UPDATE ${TABLES.orders}
+      SET stripe_session_id = $1
+      WHERE id = $2 AND user_id = $3;`,
+      [checkoutSession.id, orderId, user.userId]
+    );
 
     // Return Stripe URL to frontend
     return NextResponse.json({ url: checkoutSession.url }, { status: 200 });

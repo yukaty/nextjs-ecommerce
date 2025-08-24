@@ -7,7 +7,7 @@ import { useCart, CartItem } from '@/hooks/useCart';
 import CartItemCard from '@/components/CartItemCard';
 
 // Shipping cost
-const SHIPPING_COST = 500; // Fixed at 500 yen
+const SHIPPING_COST = 15; // Fixed shipping cost
 
 // Order confirmation page
 export default function OrderConfirmPage() {
@@ -87,13 +87,13 @@ export default function OrderConfirmPage() {
 
           <div className="mt-6">
             <div className="flex justify-between items-center pb-2 font-semibold">
-              <span>Subtotal:</span><span>${totalPrice.toLocaleString()}</span>
+              <span>Subtotal:</span><span>${totalPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center py-4 border-b border-gray-300 font-semibold">
-              <span>Shipping:</span><span>${SHIPPING_COST.toLocaleString()}</span>
+              <span>Shipping:</span><span>${SHIPPING_COST.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center pt-4 text-green-600 text-2xl font-bold">
-              <span>Total:</span><span>${finalPrice.toLocaleString()}</span>
+              <span>Total:</span><span>${finalPrice.toFixed(2)}</span>
             </div>
 
             <p className="text-gray-500 text-sm mt-2 text-right">

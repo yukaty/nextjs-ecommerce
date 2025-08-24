@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { type ReviewData } from '@/types/review';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 
@@ -9,7 +9,7 @@ type Review = ReviewData; // No changes from basic type
 // Get review list for specified product ID
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -38,22 +38,22 @@ export async function GET(
           r.content,
           r.created_at,
           u.name AS user_name
-        FROM reviews AS r
-        JOIN users AS u ON r.user_id = u.id
-        WHERE r.product_id = ?
+        FROM ${TABLES.reviews} AS r
+        JOIN ${TABLES.users} AS u ON r.user_id = u.id
+        WHERE r.product_id = $1
         ORDER BY r.created_at DESC
-        LIMIT ?
-        OFFSET ?
-        ;`, [productId, perPage, offset]
+        LIMIT $2
+        OFFSET $3
+        `, [productId, perPage, offset]
       ),
       // Get total review count and average review rating for the product
       executeQuery<{ count: number, review_avg: number }>(`
         SELECT
           COUNT(*) AS count,
           COALESCE(ROUND(AVG(score), 1), 0) AS review_avg
-        FROM reviews
-        WHERE product_id = ?
-        ;`, [productId]
+        FROM ${TABLES.reviews}
+        WHERE product_id = $1
+        `, [productId]
       )
     ]);
 
@@ -78,7 +78,7 @@ export async function GET(
 // Register new review
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
   // Get ID from URL parameters
   const { id } = await context.params;
@@ -102,8 +102,8 @@ export async function POST(
 
     // Add review information to reviews table
     await executeQuery(`
-      INSERT INTO reviews (product_id, user_id, score, content)
-      VALUES (?, ?, ?, ?);
+      INSERT INTO ${TABLES.reviews} (product_id, user_id, score, content)
+      VALUES ($1, $2, $3, $4)
     `, [productId, user.userId, score, content]);
 
     return NextResponse.json({ message: 'Review registered successfully.' }, { status: 201 });

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db';
+import { executeQuery, TABLES } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 import { type ProductData } from '@/types/product';
 
@@ -22,11 +22,11 @@ export async function GET() {
         p.price,
         p.image_url
       FROM
-        favorites AS f
+        ${TABLES.favorites} AS f
       INNER JOIN
-        products AS p ON f.product_id = p.id
+        ${TABLES.products} AS p ON f.product_id = p.id
       WHERE
-        f.user_id = ?
+        f.user_id = $1
       ORDER BY
         f.created_at DESC
       ;`, [user.userId]
@@ -55,7 +55,9 @@ export async function POST(request: NextRequest) {
 
     // Add favorite information to favorites table (skip if already registered)
     await executeQuery(
-      'INSERT IGNORE INTO favorites (product_id, user_id) VALUES (?, ?);',
+      `INSERT INTO ${TABLES.favorites} (product_id, user_id) 
+       VALUES ($1, $2) 
+       ON CONFLICT (product_id, user_id) DO NOTHING`,
       [productId, user.userId]
     );
 

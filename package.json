@@ -1,5 +1,5 @@
 {
-  "name": "samurai-store",
+  "name": "maple-store",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,8 +11,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "jose": "^6.0.12",
-    "mysql2": "^3.14.2",
     "next": "15.3.3",
+    "pg": "^8.16.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "stripe": "^18.4.0"
@@ -22,6 +22,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
+    "@types/pg": "^8.10.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

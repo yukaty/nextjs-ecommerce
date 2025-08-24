@@ -15,9 +15,9 @@ type Product = ProductData; // No changes from base type
 
 // Data required for product detail page
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     id: string; // Product ID obtained from URL
-  };
+  }>;
 }
 
 // Get product data
@@ -156,7 +156,7 @@ export default async function ProductDetailPage({
           <p className="text-3xl font-bold text-brand-600">
             ${product.price.toLocaleString()}
             <span className="text-base font-normal text-gray-500">
-              (tax included)
+            &nbsp; (tax included)
             </span>
           </p>
           {reviewCount > 0 ? (

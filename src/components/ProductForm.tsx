@@ -90,7 +90,7 @@ export default function ProductForm({
       <div className="flex flex-col gap-6 mt-2">
         <input type="file" id="imageFile" name="imageFile"
           required={!initialValues.image_url}
-          accept="image/*" // Allow image files only
+          accept="image/jpeg,image/png,image/webp" // Allow JPEG, PNG, and WebP files
           onChange={handleImageChange}
           className="text-gray-600 file:bg-gray-50 file:border file:border-gray-300 file:px-4 file:py-2 file:rounded-sm file:cursor-pointer"
         />

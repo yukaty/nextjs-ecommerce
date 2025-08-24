@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { executeQuery } from '@/lib/db'; // Common DB module
+import { executeQuery, TABLES } from '@/lib/db';
 import path from 'path';
 import { writeFile } from 'fs/promises';
-import type { ProductData } from '@/types/product'; // Product data type definition
+import type { ProductData } from '@/types/product';
 
 // Product data type definition
 type Product = Omit<ProductData, 'description'>;
@@ -41,25 +41,27 @@ export async function GET(request: NextRequest) {
     // Get search keyword from query parameters
     const keyword = searchParams.get('keyword')?.trim() || '';
 
-    // Build base WHERE clause
-    const where = keyword
-      ? 'WHERE (p.name LIKE ? OR p.description LIKE ?)'
-      : ''; // Retrieve all data without adding WHERE clause
-
-    // Build parameters to specify in WHERE clause
-    const whereParams = keyword
-      ? [`%${keyword}%`, `%${keyword}%`]
-      : [];
-
-    // Build parameters to embed in SQL statement
-    const productsParams = [...whereParams, perPage, offset];
-    const countParams = [...whereParams];
+    // Build base WHERE clause and parameters
+    let whereClause = '';
+    let productsParams: (string | number)[] = [];
+    let countParams: (string | number)[] = [];
+    
+    if (keyword) {
+      whereClause = 'WHERE (p.name LIKE $1 OR p.description LIKE $2)';
+      const keywordParam = `%${keyword}%`;
+      productsParams = [keywordParam, keywordParam, perPage, offset];
+      countParams = [keywordParam, keywordParam];
+    } else {
+      whereClause = '';
+      productsParams = [perPage, offset];
+      countParams = [];
+    }
 
     // Execute two database operations in parallel
     const [products, totalItemsResult] = await Promise.all([
       // Use LIMIT and OFFSET to retrieve only product data for current page
-      executeQuery<Product[]>(`
-        SELECT
+      executeQuery<Product[]>(
+        `SELECT
           p.id,
           p.name,
           p.price,
@@ -68,22 +70,23 @@ export async function GET(request: NextRequest) {
           p.updated_at,
           COALESCE(ROUND(AVG(r.score), 1), 0) AS review_avg,
           COALESCE(COUNT(r.id), 0) AS review_count
-        FROM products AS p
-        LEFT JOIN reviews AS r ON p.id = r.product_id
-        ${where}
+        FROM ${TABLES.products} AS p
+        LEFT JOIN ${TABLES.reviews} AS r ON p.id = r.product_id
+        ${whereClause}
         GROUP BY
           p.id, p.name, p.price, p.stock, p.image_url, p.updated_at
         ${order}
-        LIMIT ?
-        OFFSET ?
-        ;`, productsParams
+        LIMIT $${keyword ? '3' : '1'}
+        OFFSET $${keyword ? '4' : '2'}`,
+        productsParams
       ),
       // Get total count of product data matching filtering conditions
-      executeQuery<{ count: number }>(`
-        SELECT COUNT(*) AS count
-        FROM products AS p
-        ${where}
-      ;`, countParams)
+      executeQuery<{ count: number }>(
+        `SELECT COUNT(*) AS count
+        FROM ${TABLES.products} AS p
+        ${whereClause}`,
+        countParams
+      )
     ]);
 
 
@@ -123,14 +126,20 @@ export async function POST(request: NextRequest) {
 
     // Safely get file extension
     const ext = file.name.split('.').pop();
-    if (!ext || !['jpg', 'jpeg', 'png'].includes(ext.toLowerCase())) {
+    if (!ext || !['jpg', 'jpeg', 'png', 'webp'].includes(ext.toLowerCase())) {
       return NextResponse.json({ message: 'Unsupported file format.' }, { status: 400 });
     }
 
     // MIME Type check (most important)
-    const allowedMimeTypes = ['image/jpeg', 'image/png'];
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedMimeTypes.includes(file.type)) {
-      return NextResponse.json({ message: 'Unsupported file format. Please select a JPEG or PNG file.' }, { status: 400 });
+      return NextResponse.json({ message: 'Unsupported file format. Please select a JPEG, PNG, or WebP file.' }, { status: 400 });
+    }
+
+    // File size validation (limit to 2MB for product images)
+    const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSizeInBytes) {
+      return NextResponse.json({ message: 'Image file size must be less than 2MB.' }, { status: 400 });
     }
 
     // Generate unique filename
@@ -147,9 +156,9 @@ export async function POST(request: NextRequest) {
 
     // Add product information to products table
     await executeQuery(`
-      INSERT INTO products (name, image_url, description, price, stock, is_featured)
-      VALUES (?, ?, ?, ?, ?, ?);
-    `, [name, fileName, description, price, stock, isFeatured]);
+      INSERT INTO ${TABLES.products} (name, image_url, description, price, stock, is_featured)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `, [name, fileName, description, price, stock, isFeatured ? 1 : 0]);
 
     return NextResponse.json({ message: 'Product registered successfully.' }, { status: 201 });
   } catch (err) {
