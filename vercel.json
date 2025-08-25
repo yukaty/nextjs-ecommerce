@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "src/app/api/orders/webhook/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
