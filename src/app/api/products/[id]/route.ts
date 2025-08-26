@@ -3,6 +3,7 @@ import path from 'path';
 import { writeFile, rm } from 'fs/promises';
 import { executeQuery, TABLES } from '@/lib/db';
 import type { ProductData } from '@/types/product';
+import { validateImageFile } from '@/lib/validation';
 
 type Product = ProductData; // No changes from base type
 
@@ -88,20 +89,10 @@ export async function PUT(
     if (file && file.size > 0) {
       // Safely get file extension
       const ext = file.name.split('.').pop();
-      if (!ext || !['jpg', 'jpeg', 'png', 'webp'].includes(ext.toLowerCase())) {
-        return NextResponse.json({ message: 'Unsupported file format.' }, { status: 400 });
-      }
-
-      // MIME Type check
-      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!allowedMimeTypes.includes(file.type)) {
-        return NextResponse.json({ message: 'Unsupported file format. Please select a JPEG, PNG, or WebP file.' }, { status: 400 });
-      }
-
-      // File size validation (limit to 2MB for product images)
-      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
-      if (file.size > maxSizeInBytes) {
-        return NextResponse.json({ message: 'Image file size must be less than 2MB.' }, { status: 400 });
+      // Validate image file
+      const { isValid, error } = validateImageFile(file);
+      if (!isValid) {
+        return NextResponse.json({ message: error }, { status: 400 });
       }
 
       // Generate unique filename

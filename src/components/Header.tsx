@@ -25,9 +25,11 @@ export default function Header({ user }: HeaderProps) {
   const { totalQuantity } = useCart();
   // Cart quantity for display (initial value is 0)
   const [displayQuantity, setDisplayQuantity] = useState(0);
+  // Track if component has mounted to avoid hydration mismatch
+  const [mounted, setMounted] = useState(false);
 
   const searchParams = useSearchParams();
-  const perPage = searchParams.get("perPage") || "16";
+  const perPage = searchParams.get("perPage") || "10";
   const sort = searchParams.get("sort") || "new";
   const keyword = searchParams.get("keyword") || "";
 
@@ -48,6 +50,7 @@ export default function Header({ user }: HeaderProps) {
 
   // Update display when cart item quantity changes
   useEffect(() => {
+    setMounted(true);
     setDisplayQuantity(totalQuantity);
   }, [totalQuantity]);
 
@@ -129,7 +132,7 @@ export default function Header({ user }: HeaderProps) {
               height={24}
               className="w-6 h-6"
             />
-            {displayQuantity > 0 && (
+            {displayQuantity > 0 && mounted && (
               <span className="absolute -top-2 -right-2 w-[20px] h-[20px] bg-brand-500 text-white flex items-center justify-center rounded-full ring-2 ring-white text-xs font-semibold">
                 {displayQuantity > 9 ? "9+" : displayQuantity}
               </span>
@@ -160,6 +163,24 @@ export default function Header({ user }: HeaderProps) {
                     >
                       My Account
                     </Link>
+                    {user.isAdmin && (
+                      <>
+                        <Link
+                          href="/admin/products"
+                          onClick={closeMenu}
+                          className={menuItemStyle}
+                        >
+                          Admin Product List
+                        </Link>
+                        <Link
+                          href="/admin/inquiries"
+                          onClick={closeMenu}
+                          className={menuItemStyle}
+                        >
+                          Admin Inquiries List
+                        </Link>
+                      </>
+                    )}
                     <form method="POST" action="/api/auth/logout">
                       <button
                         type="submit"

@@ -1,35 +1,7 @@
 import { NextResponse } from 'next/server';
 import { executeQuery, TABLES } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
-
-// Type definition for final response (order data with product details in array)
-export interface OrderData {
-  id: number;
-  totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
-  paymentStatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
-  createdAt: string;
-  items: OrderItem[]; // Array of product details
-}
-
-// Type definition for product data per order
-interface OrderItem {
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-}
-
-// Type definition for result records from table join of orders and order_items
-interface OrderJoinRecord {
-  id: number;
-  totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
-  paymentStatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
-  createdAt: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-}
+import { OrderData, OrderJoinRecord } from '@/types/orders';
 
 // Get order data
 export async function GET() {
@@ -64,19 +36,19 @@ export async function GET() {
         // Register new ID in ordersMap
         ordersMap.set(row.id, {
           id: row.id,
-          totalAmount: row.totalAmount,
+          totalAmount: Number(row.totalamount),
           status: row.status,
-          paymentStatus: row.paymentStatus,
-          createdAt: row.createdAt,
+          paymentStatus: row.paymentstatus,
+          createdAt: row.createdat,
           items: [] // Initialize items array as empty
         });
       }
 
       // Add current record's product details to items array
       ordersMap.get(row.id)!.items.push({
-        productName: row.productName,
-        quantity: row.quantity,
-        unitPrice: row.unitPrice
+        productName: row.productname,
+        quantity: Number(row.quantity),
+        unitPrice: Number(row.unitprice)
       });
     });
 

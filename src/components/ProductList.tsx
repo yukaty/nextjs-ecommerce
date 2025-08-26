@@ -1,5 +1,3 @@
-'use client';
-
 import ProductCard, { type ProductCardProps } from './ProductCard';
 
 interface ProductListProps {

@@ -1,10 +1,6 @@
 import { executeQuery, TABLES } from '@/lib/db';
 import { CartItem } from '@/hooks/useCart';
-
-// Order status
-type OrderStatus = 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
-// Payment status
-type PaymentStatus = 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
+import { OrderStatus, PaymentStatus } from '@/types/orders';
 
 // Stock check before order confirmation
 export async function checkStock(cartItems: CartItem[]): Promise<string[]> {

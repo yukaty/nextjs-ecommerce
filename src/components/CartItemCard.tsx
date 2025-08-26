@@ -61,7 +61,7 @@ export default function CartItemCard({
         )}
       </div>
       <p className="text-right font-semibold text-lg w-32">
-        Total: ${(item.price * item.quantity).toFixed(2)}
+        Total: ${(Number(item.price) * item.quantity).toFixed(2)}
       </p>
     </div>
   );

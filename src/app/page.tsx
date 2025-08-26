@@ -1,10 +1,7 @@
-"use client"; // Runs on the client (browser) side
-
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
+import { executeQuery, TABLES } from '@/lib/db';
 import { type ProductData } from "@/types/product";
 
 // Product data type definition
@@ -13,34 +10,65 @@ type Product = Pick<
   "id" | "name" | "price" | "image_url" | "review_avg" | "review_count"
 >;
 
-export default function Home() {
-  // State to hold product data
-  const [pickUp, setPickUp] = useState<Product[]>([]);
-  const [newArrival, setNewArrival] = useState<Product[]>([]);
-  const [hotItems, setHotItems] = useState<Product[]>([]);
+interface HomePageProps {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-  // Execute once immediately after component display
-  useEffect(() => {
-    // Fetch data from products API
-    fetch("/api/products/home")
-      .then((res) => res.json()) // Convert to JSON format
-      .then((data) => {
-        // Update state
-        setPickUp(data.pickUp);
-        setNewArrival(data.newArrival);
-        setHotItems(data.hotItems);
-      })
-      .catch((err) => console.error("Failed to fetch product data.", err)); // Error handling
-  }, []);
+export default async function Home({ searchParams }: HomePageProps) {
+  const sp = await searchParams;
+  
+  // Fetch product data directly from database (matching the original API queries)
+  const pickUpQuery = `
+    SELECT id, name, price, image_url
+    FROM ${TABLES.products}
+    ORDER BY sales_count DESC
+    LIMIT 3
+  `;
+  
+  const newArrivalQuery = `
+    SELECT
+      p.id,
+      p.name,
+      p.price,
+      p.image_url,
+      COALESCE(ROUND(AVG(r.score), 1), 0) AS review_avg,
+      COALESCE(COUNT(r.id), 0) AS review_count
+    FROM ${TABLES.products} AS p
+    LEFT JOIN ${TABLES.reviews} AS r ON r.product_id = p.id
+    GROUP BY p.id
+    ORDER BY p.created_at DESC
+    LIMIT 4
+  `;
+  
+  const hotItemsQuery = `
+    SELECT
+      p.id,
+      p.name,
+      p.price,
+      p.image_url,
+      COALESCE(ROUND(AVG(r.score), 1), 0) AS review_avg,
+      COALESCE(COUNT(r.id), 0) AS review_count
+    FROM ${TABLES.products} AS p
+    LEFT JOIN ${TABLES.reviews} AS r ON r.product_id = p.id
+    WHERE p.is_featured = true
+    GROUP BY p.id
+    ORDER BY RANDOM()
+    LIMIT 4
+  `;
 
-  const searchParams = useSearchParams();
-  const message = searchParams.get("registered")
+  const [pickUp, newArrival, hotItems] = await Promise.all([
+    executeQuery<Product>(pickUpQuery),
+    executeQuery<Product>(newArrivalQuery), 
+    executeQuery<Product>(hotItemsQuery)
+  ]);
+
+  const message = sp?.registered
     ? "Registration completed successfully."
-    : searchParams.get("logged-in")
+    : sp?.['logged-in']
     ? "Login successful."
-    : searchParams.get("logged-out")
+    : sp?.['logged-out']
     ? "Logout successful."
-    : searchParams.get("submitted")
+    : sp?.submitted
     ? "Inquiry submitted successfully. Please wait for our response."
     : null;
 
@@ -81,14 +109,13 @@ export default function Home() {
             <span>Featured Picks</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-            {pickUp.slice(0, 3).map((item) => (
+            {pickUp.map((item) => (
               <ProductCard
                 key={`pickup-${item.id}`}
                 id={item.id.toString()}
                 title={item.name}
-                price={item.price}
+                price={Number(item.price)}
                 imageUrl={item.image_url ?? undefined}
-                imageSize={400}
               />
             ))}
           </div>
@@ -99,15 +126,15 @@ export default function Home() {
             <span>New Arrivals</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-            {newArrival.slice(0, 4).map((item) => (
+            {newArrival.map((item) => (
               <ProductCard
                 key={`new-${item.id}`}
                 id={item.id.toString()}
                 title={item.name}
-                price={item.price}
+                price={Number(item.price)}
                 imageUrl={item.image_url ?? undefined}
-                rating={item.review_avg}
-                reviewCount={item.review_count}
+                rating={item.review_avg ? Number(item.review_avg) : undefined}
+                reviewCount={Number(item.review_count)}
                 showCartButton
               />
             ))}
@@ -119,15 +146,15 @@ export default function Home() {
             <span>Best Sellers</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-            {hotItems.slice(0, 4).map((item) => (
+            {hotItems.map((item) => (
               <ProductCard
                 key={`featured-${item.id}`}
                 id={item.id.toString()}
                 title={item.name}
-                price={item.price}
+                price={Number(item.price)}
                 imageUrl={item.image_url ?? undefined}
-                rating={item.review_avg}
-                reviewCount={item.review_count}
+                rating={item.review_avg ? Number(item.review_avg) : undefined}
+                reviewCount={Number(item.review_count)}
                 showCartButton
               />
             ))}

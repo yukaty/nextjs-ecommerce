@@ -15,6 +15,7 @@ const authPages = [
 
 // Admin-only pages list
 const adminPages = [
+  '/admin', // Admin dashboard
   '/admin/products', // Admin product list page
   '/admin/products/register', // Admin product registration page
   '/admin/inquiries', // Admin inquiry list page

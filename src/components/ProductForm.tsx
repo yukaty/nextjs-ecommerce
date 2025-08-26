@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Input, Textarea, FormField } from '@/components/ui/Input';
 
 // Type definition for data (props) passed to product form component
 interface ProductFormProps {
@@ -19,12 +20,7 @@ interface ProductFormProps {
   submitLabel: string; // Display text for form submit button
 }
 
-// Common style for input fields
-const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500';
-// Common style for labels
-const labelStyle = "block font-bold mb-1";
-// Common style for badges (indicating required fields)
-const badgeStyle = "ml-2 px-2 py-0.5 bg-red-500 text-white text-xs font-semibold rounded-md";
+// Styles cleaned up - now using reusable UI components
 
 // Common product form component
 export default function ProductForm({
@@ -77,16 +73,17 @@ export default function ProductForm({
       onSubmit={onSubmit} encType="multipart/form-data"
       className="w-full space-y-6 p-8 bg-white shadow-lg rounded-xl"
     >
-      <label className={labelStyle} htmlFor="name">
-        Product Name<span className={badgeStyle}>Required</span>
-      </label>
-      <input type="text" id="name" name="name" required
-        defaultValue={initialValues.name} className={inputStyle}
-      />
+      <FormField label="Product Name" required>
+        <Input 
+          type="text" 
+          id="name" 
+          name="name" 
+          required
+          defaultValue={initialValues.name}
+        />
+      </FormField>
 
-      <label className={labelStyle} htmlFor="imageFile">
-        Product Image<span className={badgeStyle}>Required</span>
-      </label>
+      <FormField label="Product Image" required>
       <div className="flex flex-col gap-6 mt-2">
         <input type="file" id="imageFile" name="imageFile"
           required={!initialValues.image_url}
@@ -102,37 +99,50 @@ export default function ProductForm({
           </div>
         )}
       </div>
+      </FormField>
 
-      <label className={labelStyle} htmlFor="description">
-        Description
-      </label>
-      <textarea id="description" name="description" rows={5}
-        defaultValue={initialValues.description ?? ''} className={inputStyle}
-      />
-
-      <label className={labelStyle} htmlFor="price">
-        Price (tax included)<span className={badgeStyle}>Required</span>
-      </label>
-      <input type="number" id="price" name="price" required
-        min="0" step="1" // Allow integers 0 and above only
-        defaultValue={initialValues.price} className={inputStyle}
-      />
-
-      <label className={labelStyle} htmlFor="stock">
-        Stock Quantity<span className={badgeStyle}>Required</span>
-      </label>
-      <input type="number" id="stock" name="stock" required
-        min="0" step="1" // Allow integers 0 and above only
-        defaultValue={initialValues.stock} className={inputStyle}
-      />
-
-     <label className={labelStyle} htmlFor="isFeatured" >
-        <input
-          type="checkbox" id="isFeatured" name="isFeatured"
-          defaultChecked={initialValues.is_featured} className="mr-2"
+      <FormField label="Description">
+        <Textarea 
+          id="description" 
+          name="description" 
+          rows={5}
+          defaultValue={initialValues.description ?? ''}
         />
-        Display as featured product
-      </label>
+      </FormField>
+
+      <FormField label="Price (tax included)" required>
+        <Input
+          type="number"
+          id="price"
+          name="price"
+          required
+          min="0"
+          step="0.01"
+          defaultValue={initialValues.price.toString()}
+        />
+      </FormField>
+
+      <FormField label="Stock Quantity" required>
+        <Input
+          type="number"
+          id="stock"
+          name="stock"
+          required
+          min="0"
+          step="1"
+          defaultValue={initialValues.stock?.toString()}
+        />
+      </FormField>
+
+      <FormField label="Display as featured product">
+        <input
+          type="checkbox"
+          id="isFeatured"
+          name="isFeatured"
+          defaultChecked={initialValues.is_featured}
+          className="mr-2"
+        />
+      </FormField>
 
       <div className="flex justify-end space-x-4 mt-6">
         <button type="button" onClick={handleCancel}

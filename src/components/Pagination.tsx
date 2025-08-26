@@ -1,66 +1,86 @@
-'use client';
-
-import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
+  basePath?: string;
+  searchParams?: Record<string, string>;
 }
 
-export default function Pagination({ currentPage, totalPages }: PaginationProps) {
-  const router = useRouter();              // router object for navigation
-  const searchParams = useSearchParams();  // query parameters from the URL
-
-  // Event handler for page change
-  // This function updates the URL with the new page number without reloading the page
-  const handlePageChange = (newPage: number) => {
-    // Get the current search parameters
-    const params = new URLSearchParams(searchParams.toString());
-    // Update the 'page' parameter with the new page number
-    params.set('page', String(newPage));
-    // Use the router to push the new URL with updated parameters
-    router.push(`?${params.toString()}`);
+export default function Pagination({ 
+  currentPage, 
+  totalPages, 
+  basePath = '',
+  searchParams = {}
+}: PaginationProps) {
+  // Helper function to create page URL
+  const createPageUrl = (page: number) => {
+    const params = new URLSearchParams({ 
+      ...searchParams, 
+      page: page.toString() 
+    });
+    return `${basePath}?${params.toString()}`;
   };
 
   // Base styles for pagination buttons
-  const baseClasses = 'min-w-9 h-9 rounded border border-gray-300 mx-1 cursor-pointer';
+  const baseClasses = 'min-w-9 h-9 rounded border border-gray-300 mx-1 flex items-center justify-center';
   const hover = 'hover:bg-gray-100 hover:text-gray-800';
   const active = 'bg-brand-500 text-white border-brand-500';
-  const disabled = 'opacity-50';
+  const disabled = 'opacity-50 cursor-not-allowed';
 
   return (
     <nav className="flex justify-center items-center mt-8" aria-label="Pagination">
-      {/* Back（<） */}
-      <button
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={`${baseClasses} text-gray-700 ${hover} ${currentPage === 1 ? disabled : ''}`}
-      >
-        &lt;
-      </button>
+      {/* Back (<) */}
+      {currentPage === 1 ? (
+        <span className={`${baseClasses} text-gray-700 ${disabled}`}>
+          &lt;
+        </span>
+      ) : (
+        <Link 
+          href={createPageUrl(currentPage - 1)}
+          className={`${baseClasses} text-gray-700 ${hover}`}
+        >
+          &lt;
+        </Link>
+      )}
 
       {/* Page numbers */}
       {Array.from({ length: totalPages }, (_, i) => {
         const page = i + 1;
         const isActive = (page === currentPage);
+        
+        if (isActive) {
+          return (
+            <span key={page} className={`${baseClasses} ${active}`}>
+              {page}
+            </span>
+          );
+        }
+        
         return (
-          <button key={page} onClick={() => handlePageChange(page)} disabled={isActive}
-            className={`${baseClasses} ${isActive ? active : 'text-gray-700 ' + hover}`}
+          <Link 
+            key={page}
+            href={createPageUrl(page)}
+            className={`${baseClasses} text-gray-700 ${hover}`}
           >
             {page}
-          </button>
+          </Link>
         );
       })}
 
-      {/* Next（>） */}
-      <button
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={`${baseClasses} text-gray-700 ${hover} ${currentPage === totalPages ? disabled : ''}`}
-      >
-        &gt;
-      </button>
+      {/* Next (>) */}
+      {currentPage === totalPages ? (
+        <span className={`${baseClasses} text-gray-700 ${disabled}`}>
+          &gt;
+        </span>
+      ) : (
+        <Link 
+          href={createPageUrl(currentPage + 1)}
+          className={`${baseClasses} text-gray-700 ${hover}`}
+        >
+          &gt;
+        </Link>
+      )}
     </nav>
   );
 }
-

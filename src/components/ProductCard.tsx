@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
+import { useState, useEffect } from "react";
 
 // Type definition for data (props) passed to product card component
 export interface ProductCardProps {
@@ -11,7 +12,6 @@ export interface ProductCardProps {
   price: number; // Product price
 
   imageUrl?: string; // Product image URL
-  imageSize?: 300 | 400; // Image size
 
   rating?: number; // Review rating (average)
   reviewCount?: number; // Total number of reviews
@@ -26,7 +26,6 @@ export default function ProductCard({
   title,
   price,
   imageUrl,
-  imageSize = 300,
   rating,
   reviewCount,
   showCartButton = false,
@@ -34,12 +33,23 @@ export default function ProductCard({
 }: ProductCardProps) {
   // Get cart management functions
   const { addItem, isInCart } = useCart();
-  const inCart = isInCart(id); // Check if already in cart
+
+  // Hydration-safe cart state
+  const [inCart, setInCart] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Update cart state after component mounts to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+    setInCart(isInCart(id));
+  }, [id, isInCart]);
 
   // Event handler for cart button click
   const handleCart = () => {
     // Add to cart
     addItem({ id, title, price, imageUrl });
+    // Update local state immediately for better UX
+    setInCart(true);
   };
 
   // Show dummy image if no image specified
@@ -56,55 +66,56 @@ export default function ProductCard({
   };
 
   return (
-    <div
-      className={`
-      flex flex-col bg-white max-w-sm w-full p-2
-      ${className}
-    `}
-    >
+    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mx-2 ${className}`}>
       <Link href={`/products/${id}`}>
-        <Image
-          src={finalImageUrl}
-          alt={title || "Product image"}
-          width={imageSize}
-          height={imageSize}
-          className="w-full object-contain aspect-square"
-        />
+        <div className="aspect-square relative">
+          <Image
+            src={finalImageUrl}
+            alt={title || "Product image"}
+            fill
+            sizes="300px"
+            className="object-cover"
+          />
+        </div>
       </Link>
-      <div className="flex flex-col">
-        <h3 className="text-sm font-semibold leading-tight mb-1">{title}</h3>
-        {rating !== undefined &&
-          reviewCount !== undefined &&
-          (reviewCount > 0 ? (
-            <p className="flex items-center text-sm mb-1">
+      <div className="p-4">
+        <Link href={`/products/${id}`}>
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-brand-600 mb-2">
+            {title}
+          </h3>
+        </Link>
+        {rating !== undefined && reviewCount !== undefined && mounted ? (
+          Number(reviewCount) > 0 ? (
+            <p className="flex items-center text-sm mb-2">
               <span className="text-yellow-500 mr-1">
-                {displayStars(rating || 0)}
+                {displayStars(Number(rating) || 0)}
               </span>
-              <span className="text-gray-600">({reviewCount} reviews)</span>
+              <span className="text-gray-600">({Number(reviewCount)} reviews)</span>
             </p>
           ) : (
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mb-2">
               No reviews yet
             </p>
-          ))}
-        <div className="flex justify-between items-center w-full mt-2">
-          <p className="text-lg font-bold">${price.toLocaleString()}</p>
-          {showCartButton && (
-            <button
-              onClick={!inCart ? handleCart : undefined}
-              disabled={inCart}
-              className={`border py-2 px-4 rounded-sm transition-colors
-                ${
-                  inCart
-                    ? "bg-brand-500 text-white"
-                    : "border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-white"
-                }
-              `}
-            >
-              {inCart ? "Added" : "Add to Cart"}
-            </button>
-          )}
-        </div>
+          )
+        ) : null}
+        <p className="text-xl font-bold text-gray-900 mb-4">
+          ${Number(price).toFixed(2)}
+        </p>
+        {showCartButton && (
+          <button
+            onClick={!inCart ? handleCart : undefined}
+            disabled={inCart}
+            className={`w-full py-2 px-4 rounded-sm transition-colors font-medium
+              ${
+                inCart && mounted
+                  ? "bg-brand-500 text-white cursor-default"
+                  : "border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-white"
+              }
+            `}
+          >
+            {inCart && mounted ? "Added to Cart" : "Add to Cart"}
+          </button>
+        )}
       </div>
     </div>
   );

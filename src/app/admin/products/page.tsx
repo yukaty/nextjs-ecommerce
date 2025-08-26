@@ -73,16 +73,10 @@ export default async function AdminProductsPage({
         <h1 className="text-center">Product List</h1>
         <div className="flex justify-end mb-4">
           <Link
-            href="/admin/inquiries"
-            className="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 rounded-sm font-semibold mr-2"
-          >
-            Inquiries
-          </Link>
-          <Link
             href="/admin/products/register"
             className="bg-brand-500 hover:bg-brand-600 text-white py-2 px-4 rounded-sm font-semibold"
           >
-            Add New Product
+            ＋ Add New Product
           </Link>
         </div>
 
@@ -105,7 +99,7 @@ export default async function AdminProductsPage({
                     colSpan={6}
                     className={`${tableStyle} text-center text-gray-500`}
                   >
-                  No products found.
+                    No products found.
                   </td>
                 </tr>
               ) : (

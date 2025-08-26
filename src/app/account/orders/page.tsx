@@ -2,33 +2,7 @@ import Link from "next/link";
 import { getAuthUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { executeQuery, TABLES } from "@/lib/db";
-
-// Order data types
-interface OrderData {
-  id: number;
-  totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
-  paymentStatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
-  createdAt: string;
-  items: OrderItem[];
-}
-
-interface OrderItem {
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-}
-
-interface OrderJoinRecord {
-  id: number;
-  totalamount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'refunded';
-  paymentstatus: 'unpaid' | 'payment_processing' | 'payment_success' | 'payment_failed' | 'refund_processing' | 'refunded';
-  createdat: string;
-  productname: string;
-  quantity: number;
-  unitprice: number;
-}
+import { OrderData, OrderJoinRecord } from "@/types/orders";
 
 export default async function OrdersPage() {
   const user = await getAuthUser();

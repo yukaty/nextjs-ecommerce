@@ -3,6 +3,7 @@ import { executeQuery, TABLES } from '@/lib/db';
 import path from 'path';
 import { writeFile } from 'fs/promises';
 import type { ProductData } from '@/types/product';
+import { validateImageFile } from '@/lib/validation';
 
 // Product data type definition
 type Product = Omit<ProductData, 'description'>;
@@ -124,25 +125,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Required fields are missing.' }, { status: 400 });
     }
 
-    // Safely get file extension
-    const ext = file.name.split('.').pop();
-    if (!ext || !['jpg', 'jpeg', 'png', 'webp'].includes(ext.toLowerCase())) {
-      return NextResponse.json({ message: 'Unsupported file format.' }, { status: 400 });
-    }
-
-    // MIME Type check (most important)
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedMimeTypes.includes(file.type)) {
-      return NextResponse.json({ message: 'Unsupported file format. Please select a JPEG, PNG, or WebP file.' }, { status: 400 });
-    }
-
-    // File size validation (limit to 2MB for product images)
-    const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
-    if (file.size > maxSizeInBytes) {
-      return NextResponse.json({ message: 'Image file size must be less than 2MB.' }, { status: 400 });
+    // Validate image file
+    const { isValid, error } = validateImageFile(file);
+    if (!isValid) {
+      return NextResponse.json({ message: error }, { status: 400 });
     }
 
     // Generate unique filename
+    const ext = file.name.split('.').pop()?.toLowerCase();
     const timestamp = Date.now(); // Current timestamp
     const random = Math.floor(Math.random() * 10000); // Random number 0-9999
     const fileName = `${timestamp}_${random}.${ext}`; // Build filename

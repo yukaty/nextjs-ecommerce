@@ -3,11 +3,11 @@ import Image from 'next/image';
 
 // Common footer
 export default function Footer() {
-  const currentYear = new Date().getFullYear(); // Get current year
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-800 py-4 text-white">
-      <div className="container mx-auto px-4 max-w-6xl grid grid-cols-1 md:grid-cols-[4fr_2fr_2fr] gap-8 border-b border-gray-700 pb-8 mb-8">
+    <footer className="bg-stone-100 mt-12 py-4 text-stone-700">
+      <div className="container mx-auto px-4 max-w-6xl grid grid-cols-1 md:grid-cols-[4fr_2fr_2fr] gap-8 border-b border-stone-300 pb-8 mb-8">
         <div>
           <h3 className="text-xl mb-4">About MAPLE Store</h3>
           <p className="text-sm pr-18">We deliver Canadian products directly to your door. Our mission is to provide the highest quality products while ensuring a seamless shopping experience.</p>
@@ -32,7 +32,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pb-8 text-center text-sm">
+      <div className="container mx-auto px-4 text-center text-sm">
         <p>&copy; {currentYear} MAPLE Store. All Rights Reserved.</p>
       </div>
     </footer>
