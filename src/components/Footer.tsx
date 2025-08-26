@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
 
 // Common footer
 export default function Footer() {
@@ -16,18 +16,18 @@ export default function Footer() {
         <div>
           <h3 className="text-xl mb-4">Quick Links</h3>
           <ul className="space-y-2 list-none pl-0">
-            <li><Link href="/privacy">Privacy Policy</Link></li>
-            <li><Link href="/terms">Terms of Service</Link></li>
+            <li><Link href="/privacy" className="hover:text-brand-500 transition-colors">Privacy Policy</Link></li>
+            <li><Link href="/terms" className="hover:text-brand-500 transition-colors">Terms of Service</Link></li>
           </ul>
         </div>
 
         <div>
           <h3 className="text-xl mb-4">Contact Us</h3>
-          <p><Link href="/contact">Contact Us Here</Link></p>
+          <p><Link href="/contact" className="hover:text-brand-500 transition-colors">Send Message</Link></p>
           <div className="flex space-x-4 mt-5">
-            <Image src="/icons/facebook-icon.png" alt="Facebook" width={24} height={24} className="w-6 h-6" />
-            <Image src="/icons/x-icon.svg" alt="X" width={24} height={24} className="w-6 h-6" />
-            <Image src="/icons/youtube-icon.svg" alt="Instagram" width={24} height={24} className="w-6 h-6" />
+            <FaFacebook className="w-6 h-6 text-stone-500 hover:text-brand-500 transition-colors cursor-pointer" />
+            <FaInstagram className="w-6 h-6 text-stone-500 hover:text-brand-500 transition-colors cursor-pointer" />
+            <FaYoutube className="w-6 h-6 text-stone-500 hover:text-brand-500 transition-colors cursor-pointer" />
           </div>
         </div>
       </div>

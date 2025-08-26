@@ -1,5 +1,15 @@
-import Link from "next/link";
 import CartClearHandler from "./CartClearHandler";
+import MenuCard from "@/components/MenuCard";
+import { getAuthUser } from "@/lib/auth";
+import {
+  FiUser,
+  FiLock,
+  FiShoppingBag,
+  FiHeart,
+  FiShoppingCart,
+  FiMessageCircle,
+  FiTool,
+} from "react-icons/fi";
 
 // My Page - Server Component
 interface AccountPageProps {
@@ -10,9 +20,8 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
   const sp = await searchParams;
   const sessionId = sp?.session_id as string | undefined;
 
-  // Common menu item styles
-  const menuItemStyle =
-    "w-full flex items-center px-4 pt-4 border border-gray-300 rounded shadow-lg hover:ring-2 hover:ring-brand-200 hover:shadow-xl hover:bg-gray-100";
+  // Get current user
+  const user = await getAuthUser();
 
   // Set message based on query parameters
   const message = sp?.edited
@@ -38,39 +47,71 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       <main className="container mx-auto px-4 py-18">
         <h1 className="text-center mb-8">My Page</h1>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-          <Link href="/account/edit" className={menuItemStyle}>
-            <div className="flex flex-col text-left">
-              <h2 className="mt-0 font-medium">Edit Member Information</h2>
-              <p className="text-gray-600">
-                You can edit your name and email address
-              </p>
-            </div>
-          </Link>
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <MenuCard
+            href="/account/edit"
+            title="Edit Profile"
+            description="Update your name and email address"
+            icon={<FiUser className="w-5 h-5" />}
+          />
 
-          <Link href="/account/password" className={menuItemStyle}>
-            <div className="flex flex-col text-left">
-              <h2 className="mt-0 font-medium">Change Password</h2>
-              <p className="text-gray-600">You can change your password</p>
-            </div>
-          </Link>
+          <MenuCard
+            href="/account/password"
+            title="Change Password"
+            description="Update your account password"
+            icon={<FiLock className="w-5 h-5" />}
+          />
 
-          <Link href="/account/orders" className={menuItemStyle}>
-            <div className="flex flex-col text-left">
-              <h2 className="mt-0 font-medium">Order History</h2>
-              <p className="text-gray-600">You can check your order history</p>
-            </div>
-          </Link>
+          <MenuCard
+            href="/account/orders"
+            title="Order History"
+            description="View your past orders and status"
+            icon={<FiShoppingBag className="w-5 h-5" />}
+          />
 
-          <Link href="/account/favorites" className={menuItemStyle}>
-            <div className="flex flex-col text-left">
-              <h2 className="mt-0 font-medium">Check Favorite Products</h2>
-              <p className="text-gray-600">
-                You can check your favorite products
-              </p>
-            </div>
-          </Link>
+          <MenuCard
+            href="/account/favorites"
+            title="Favorite Products"
+            description="Manage your favorite items"
+            icon={<FiHeart className="w-5 h-5" />}
+          />
+
+          <MenuCard
+            href="/cart"
+            title="Shopping Cart"
+            description="View items in your cart"
+            icon={<FiShoppingCart className="w-5 h-5" />}
+          />
+
+          {!user?.isAdmin && (
+            <MenuCard
+              href="/contact"
+              title="Contact Support"
+              description="Get help with your account"
+              icon={<FiMessageCircle className="w-5 h-5" />}
+            />
+          )}
         </div>
+        {user?.isAdmin && (
+          <>
+            <h1 className="text-center mt-24">Admin Tools</h1>
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <MenuCard
+                href="/admin/products"
+                title="Manage Products"
+                description="Add, edit, or remove products"
+                icon={<FiTool className="w-5 h-5" />}
+              />
+
+              <MenuCard
+                href="/admin/inquiries"
+                title="Manage Inquiries"
+                description="View customer inquiries"
+                icon={<FiMessageCircle className="w-5 h-5" />}
+              />
+            </div>
+          </>
+        )}
       </main>
     </>
   );
