@@ -1,10 +1,10 @@
-import ProductCard, { type ProductCardProps } from './ProductCard';
+import ProductCard, { type ProductCardProps } from "./ProductCard";
 
 interface ProductListProps {
   products: ProductCardProps[]; // Array of product data
 }
 
-export default function ProductList( { products }: ProductListProps ) {
+export default function ProductList({ products }: ProductListProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       {products.length === 0 ? (
@@ -14,10 +14,9 @@ export default function ProductList( { products }: ProductListProps ) {
       ) : (
         // Map through products and render ProductCard for each
         products.map((product) => (
-          <ProductCard key={product.id} {...product} imageSize={300} showCartButton />
+          <ProductCard key={product.id} {...product} showCartButton />
         ))
       )}
     </div>
   );
 }
-
