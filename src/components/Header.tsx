@@ -33,9 +33,19 @@ export default function Header({ user }: HeaderProps) {
   const [mounted, setMounted] = useState(false);
 
   const searchParams = useSearchParams();
-  const perPage = searchParams.get("perPage") || "10";
-  const sort = searchParams.get("sort") || "new";
-  const keyword = searchParams.get("keyword") || "";
+  const [searchState, setSearchState] = useState({
+    perPage: "10",
+    sort: "new",
+    keyword: "",
+  });
+
+  useEffect(() => {
+    setSearchState({
+      perPage: searchParams.get("perPage") || "10",
+      sort: searchParams.get("sort") || "new",
+      keyword: searchParams.get("keyword") || "",
+    });
+  }, [searchParams]);
 
   // Detect clicks outside menu and close menu
   useEffect(() => {
@@ -85,13 +95,13 @@ export default function Header({ user }: HeaderProps) {
             {/* Search - hidden on mobile */}
             <form action="/products" method="GET" className="hidden lg:block">
               <input type="hidden" name="page" value="1" />
-              <input type="hidden" name="perPage" value={perPage} />
-              <input type="hidden" name="sort" value={sort} />
+              <input type="hidden" name="perPage" value={searchState.perPage} />
+              <input type="hidden" name="sort" value={searchState.sort} />
               <input
                 type="text"
                 name="keyword"
                 placeholder="Search..."
-                defaultValue={keyword}
+                defaultValue={searchState.keyword}
                 className="border border-gray-300 rounded-md py-1 px-3 text-sm focus:ring-brand-500"
               />
             </form>
@@ -181,47 +191,66 @@ export default function Header({ user }: HeaderProps) {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <nav className="space-y-2">
-              <Link
-                href="/"
-                className="block py-2 px-4 hover:bg-gray-100 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/products"
-                className="block py-2 px-4 hover:bg-gray-100 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Products
-              </Link>
-              <Link
-                href="/contact"
-                className="block py-2 px-4 hover:bg-gray-100 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
-              <Link
-                href="/account/favorites"
-                className="block py-2 px-4 hover:bg-gray-100 transition-colors sm:hidden"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Favorites
-              </Link>
+              {/* Mobile user menu */}
+              <div className="border-t border-gray-200 pt-2 mt-2">
+                {user ? (
+                  <>
+                    <Link
+                      href="/account"
+                      className="block py-2 px-4 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Account
+                    </Link>
+                    <form
+                      method="POST"
+                      action="/api/auth/logout"
+                      className="px-4"
+                    >
+                      <button
+                        type="submit"
+                        className="block w-full text-left py-2 hover:bg-gray-100 transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="block py-2 px-4 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="block py-2 px-4 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
             </nav>
 
             {/* Mobile search */}
             <div className="px-4 pt-4 border-t border-gray-200 mt-4 lg:hidden">
               <form action="/products" method="GET">
                 <input type="hidden" name="page" value="1" />
-                <input type="hidden" name="perPage" value={perPage} />
-                <input type="hidden" name="sort" value={sort} />
+                <input
+                  type="hidden"
+                  name="perPage"
+                  value={searchState.perPage}
+                />
+                <input type="hidden" name="sort" value={searchState.sort} />
                 <input
                   type="text"
                   name="keyword"
                   placeholder="Search products..."
-                  defaultValue={keyword}
+                  defaultValue={searchState.keyword}
                   className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:ring-2 focus:ring-brand-500"
                 />
               </form>

@@ -29,8 +29,8 @@ export default async function InquiriesPage() {
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="my-4">
-        <Link href="/admin/products" className="text-brand-600 hover:underline">
-          ← Back to Product List
+        <Link href="/account" className="text-brand-600 hover:underline">
+          ← Back to My Page
         </Link>
       </div>
       <h1 className="text-center">Inquiries List</h1>

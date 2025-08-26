@@ -1,59 +1,46 @@
-'use client'; // Runs on client (browser) side
-
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Input, FormField } from '@/components/ui/Input';
+import { redirect } from 'next/navigation';
+
+// Server Action for password change
+async function changePasswordAction(formData: FormData) {
+  'use server';
+  
+  const oldPassword = formData.get('oldPassword') as string;
+  const newPassword = formData.get('newPassword') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+
+  // Input validation
+  if (!oldPassword?.trim() || !newPassword?.trim() || !confirmPassword?.trim()) {
+    throw new Error('Please fill in all fields.');
+  }
+  if (newPassword !== confirmPassword) {
+    throw new Error('New passwords do not match.');
+  }
+
+  try {
+    // Send PUT request to password change API
+    const res = await fetch(`${process.env.BASE_URL}/api/users/password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Password change failed.');
+    }
+
+    redirect('/account?password-changed=1');
+  } catch (error) {
+    console.error('Password change error:', error);
+    throw new Error('A communication error occurred.');
+  }
+}
 
 // Password change page
 export default function PasswordChangePage() {
-  const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Cancel default submit behavior
-    setErrorMessage(''); // Clear errors before submission
-
-    const formData = new FormData(e.currentTarget);
-    const oldPassword = formData.get('oldPassword') as string;
-    const newPassword = formData.get('newPassword') as string;
-    const confirmPassword = formData.get('confirmPassword') as string;
-
-    // Input data validation
-    if (!oldPassword?.trim() || !newPassword?.trim() || !confirmPassword?.trim()) {
-      setErrorMessage('Please fill in all fields.');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setErrorMessage('New passwords do not match.');
-      return;
-    }
-
-    try { // Send PUT request to password change API
-      const res = await fetch('/api/users/password', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      });
-
-      if (res.ok) { // Redirect to My Page on successful change
-        router.push('/account?password-changed=1');
-      } else { // Display error information on change failure
-        const data = await res.json();
-        setErrorMessage(data.message || 'Password change failed.');
-      }
-    } catch (err) {
-      console.error('Password change error:', err);
-      setErrorMessage('A communication error occurred.');
-    }
-  };
-
-  // Common input field styles
-  const inputStyle = 'w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500';
-  // Common label styles
-  const labelStyle = "block font-bold mb-1";
-  // Common badge styles
-  const badgeStyle = "ml-2 px-2 py-0.5 bg-red-500 text-white text-xs font-semibold rounded-md";
-
   return (
     <main className="max-w-md mx-auto py-10">
       <div className="my-4">
@@ -62,29 +49,38 @@ export default function PasswordChangePage() {
         </Link>
       </div>
       <h1 className="text-center mb-6">Change Password</h1>
-      {errorMessage && (
-        <p className="text-red-600 text-center mt-8">{errorMessage}</p>
-      )}
 
-      <form onSubmit={handleSubmit} className="w-full space-y-6 p-8 bg-white shadow-lg rounded-xl">
-        <label className={labelStyle} htmlFor="oldPassword">
-          Current Password<span className={badgeStyle}>Required</span>
-        </label>
-        <input type="password" id="oldPassword" name="oldPassword" required className={inputStyle} />
+      <form action={changePasswordAction} className="w-full space-y-6 p-8 bg-white shadow-lg rounded-xl">
+        <FormField label="Current Password" required>
+          <Input
+            type="password"
+            id="oldPassword"
+            name="oldPassword"
+            required
+          />
+        </FormField>
 
-        <label className={labelStyle} htmlFor="newPassword">
-          New Password<span className={badgeStyle}>Required</span>
-        </label>
-        <input type="password" id="newPassword" name="newPassword" required className={inputStyle} />
+        <FormField label="New Password" required>
+          <Input
+            type="password"
+            id="newPassword"
+            name="newPassword"
+            required
+          />
+        </FormField>
 
-        <label className={labelStyle} htmlFor="confirmPassword">
-          New Password (Confirmation)<span className={badgeStyle}>Required</span>
-        </label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required className={inputStyle} />
+        <FormField label="New Password (Confirmation)" required>
+          <Input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+          />
+        </FormField>
 
-        <button type="submit" className="w-full mt-2 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded-sm">
+        <Button type="submit" variant="primary" fullWidth>
           Update
-        </button>
+        </Button>
       </form>
      </main>
   );

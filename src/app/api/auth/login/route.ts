@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     const user = users[0];
     if (!user) { // No matching user found
-      return NextResponse.json({ message: 'User not found or not enabled.' }, { status: 401 });
+      return NextResponse.json({ message: 'User not found.' }, { status: 404 });
     }
 
     // Password comparison

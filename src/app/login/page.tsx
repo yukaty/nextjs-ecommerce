@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link"; // Link to registration page
+import { Button } from "@/components/ui/Button";
+import { Input, FormField } from "@/components/ui/Input";
 
 // Login page
 export default function LoginPage() {
@@ -58,15 +60,6 @@ export default function LoginPage() {
     }
   };
 
-  // Common style for input fields
-  const inputStyle =
-    "w-full border border-gray-300 px-3 py-2 rounded-sm focus:ring-2 focus:ring-brand-500";
-  // Common style for labels
-  const labelStyle = "block font-bold mb-1";
-  // Common style for badges
-  const badgeStyle =
-    "ml-2 px-2 py-0.5 bg-red-500 text-white text-xs font-semibold rounded-md";
-
   return (
     <main className="max-w-md mx-auto py-10">
       <h1 className="text-center mb-6">Login</h1>
@@ -77,34 +70,31 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="w-full space-y-6 p-8 bg-white shadow-lg rounded-xl"
       >
-        <label className={labelStyle} htmlFor="email">
-          Email Address<span className={badgeStyle}>Required</span>
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          className={inputStyle}
-        />
+        <FormField label="Email Address" required>
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            required
+          />
+        </FormField>
 
-        <label className={labelStyle} htmlFor="password">
-          Password<span className={badgeStyle}>Required</span>
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          className={inputStyle}
-        />
+        <FormField label="Password" required>
+          <Input
+            type="password"
+            id="password"
+            name="password"
+            required
+          />
+        </FormField>
 
-        <button
+        <Button
           type="submit"
-          className="w-full mt-6 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded-sm font-semibold"
+          variant="primary"
+          fullWidth
         >
           Login
-        </button>
+        </Button>
 
         <div className="text-center mt-4">
           <Link href="/register" className="text-brand-600 hover:underline">

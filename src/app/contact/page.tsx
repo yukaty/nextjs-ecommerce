@@ -20,7 +20,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           ← Back to Home
         </Link>
       </div>
-      
+
       <h1 className="text-center mb-8">Contact Us</h1>
 
       {sent && (
@@ -63,26 +63,14 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </FormField>
 
           <div className="flex justify-between items-center">
-            <Link
-              href="/"
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-6 rounded-sm"
-            >
-              Cancel
-            </Link>
-            <Button type="submit" size="lg">
+            <Button variant="secondary" size="lg">
+              <Link href="/">Cancel</Link>
+            </Button>
+            <Button type="submit" variant="primary" size="lg">
               Send Message
             </Button>
           </div>
         </Form>
-
-        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Other Ways to Reach Us</h2>
-          <div className="space-y-2 text-gray-600">
-            <p>📧 Email: contact@example.com</p>
-            <p>📞 Phone: +1 (555) 123-4567</p>
-            <p>🕒 Business Hours: Mon-Fri 9:00 AM - 5:00 PM</p>
-          </div>
-        </div>
       </div>
     </main>
   );

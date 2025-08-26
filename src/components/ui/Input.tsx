@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'small';
   error?: boolean;
@@ -20,7 +18,7 @@ const getInputStyles = (variant: 'default' | 'small' = 'default', error?: boolea
   const sizeStyles = variant === 'small' ? 'px-3 py-1 text-sm' : 'px-3 py-2';
   const widthStyles = 'w-full';
   const errorStyles = error ? 'border-red-500 focus:ring-red-500' : '';
-  
+
   return `${baseStyles} ${sizeStyles} ${widthStyles} ${errorStyles}`.trim();
 };
 
@@ -28,7 +26,7 @@ const getInputStyles = (variant: 'default' | 'small' = 'default', error?: boolea
 export function Input({ variant = 'default', error, className, ...props }: InputProps) {
   const inputStyles = getInputStyles(variant, error);
   const combinedClassName = className ? `${inputStyles} ${className}` : inputStyles;
-  
+
   return <input className={combinedClassName} {...props} />;
 }
 
@@ -36,7 +34,7 @@ export function Input({ variant = 'default', error, className, ...props }: Input
 export function Textarea({ error, className, ...props }: TextareaProps) {
   const textareaStyles = getInputStyles('default', error);
   const combinedClassName = className ? `${textareaStyles} ${className}` : textareaStyles;
-  
+
   return <textarea className={combinedClassName} {...props} />;
 }
 
@@ -44,14 +42,12 @@ export function Textarea({ error, className, ...props }: TextareaProps) {
 export function Label({ required, children, className, ...props }: LabelProps) {
   const labelStyles = 'block font-bold mb-1';
   const combinedClassName = className ? `${labelStyles} ${className}` : labelStyles;
-  
+
   return (
     <label className={combinedClassName} {...props}>
       {children}
       {required && (
-        <span className="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs font-semibold rounded-md">
-          Required
-        </span>
+        <span className="ml-1 text-lg text-red-500">*</span>
       )}
     </label>
   );

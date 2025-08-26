@@ -28,8 +28,6 @@ export default async function OrdersPage() {
     [user.userId]
   );
 
-  console.log('Orders data from DB:', ordersData);
-
   // Use Map object to group product data by order
   const ordersMap = new Map<number, OrderData>();
   ordersData.forEach((row: OrderJoinRecord) => {

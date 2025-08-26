@@ -1,4 +1,4 @@
-"use client"; // Client component that runs on the browser side
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -66,7 +66,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mx-2 ${className}`}>
+    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden m-2 ${className}`}>
       <Link href={`/products/${id}`}>
         <div className="aspect-square relative">
           <Image

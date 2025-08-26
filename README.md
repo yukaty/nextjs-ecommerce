@@ -1,19 +1,17 @@
 # Next.js eCommerce Application
 
-An eCommerce application built with Next.js, TypeScript, and PostgreSQL.
+This full-stack eCommerce project was created to explore and implement the new features and best practices of Next.js 15 and TypeScript.
 
 ## Features
 
-- Product catalog with search and filtering
-- Shopping cart functionality
-- User authentication
-- Order management system
-- Payment processing with Stripe
-- Admin dashboard for product management
+- Product browsing with search and filters
+- Secure user accounts and authentication
+- Cart, checkout, and payment integration
+- Order and inventory management for Admin
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15, TypeScript, Tailwind
 - **Backend**: Next.js API Routes
 - **Database**: PostgreSQL with pg
 - **Authentication**: JWT with jose
@@ -62,5 +60,5 @@ An eCommerce application built with Next.js, TypeScript, and PostgreSQL.
 
 See `database/schema-postgres.sql` for sample user credentials.
 
-For payment testing, see: https://docs.stripe.com/testing
+For payment testing, see: https://docs.stripe.com/testing#cards
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Textarea, FormField } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 // Type definition for data (props) passed to product form component
 interface ProductFormProps {
@@ -145,16 +146,21 @@ export default function ProductForm({
       </FormField>
 
       <div className="flex justify-end space-x-4 mt-6">
-        <button type="button" onClick={handleCancel}
-          className="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-sm"
+        <Button 
+          type="button" 
+          variant="secondary"
+          onClick={handleCancel}
+          className="w-1/2"
         >
           Cancel
-        </button>
-        <button type="submit"
-          className="w-1/2 bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2 rounded-sm"
+        </Button>
+        <Button 
+          type="submit"
+          variant="primary"
+          className="w-1/2"
         >
           {submitLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );

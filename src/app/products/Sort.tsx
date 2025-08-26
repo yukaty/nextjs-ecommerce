@@ -1,4 +1,4 @@
-'use client'; // Runs on the client (browser) side
+'use client';
 
 // Type definition for data (props) passed to sort component
 interface Props {
